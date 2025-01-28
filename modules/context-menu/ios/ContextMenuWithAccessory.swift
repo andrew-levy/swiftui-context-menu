@@ -79,7 +79,7 @@ class CustomContextMenuController: UIViewController, UIContextMenuInteractionDel
     return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { _ -> UIMenu? in
       // Create actions dynamically from menuItems
       let actions = self.menuItems.compactMap { item -> UIAction? in
-        return UIAction(title: item.text) { _ in
+          return UIAction(title: item.text, subtitle: item.subtitle) { _ in
           print("\(item.text) selected")
         }
       }

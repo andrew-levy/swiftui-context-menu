@@ -9,6 +9,7 @@ import {
   ContextMenuAccessory,
   ContextMenuPreview,
   ContextMenuItemTitle,
+  ContextMenuItemSubtitle,
 } from "@/modules/context-menu";
 
 export default function HomeScreen() {
@@ -28,8 +29,12 @@ export default function HomeScreen() {
         </ContextMenuTrigger>
         <ContextMenuItem>
           <ContextMenuItemTitle>Hello from children</ContextMenuItemTitle>
+          <ContextMenuItemSubtitle>Subtitle here!</ContextMenuItemSubtitle>
         </ContextMenuItem>
-        <ContextMenuItem text='item 2' />
+        <ContextMenuItem>
+          <ContextMenuItemTitle>Hello from children 2</ContextMenuItemTitle>
+          <ContextMenuItemSubtitle>Subtitle there...</ContextMenuItemSubtitle>
+        </ContextMenuItem>
         <ContextMenuAccessory>
           <Reactions />
         </ContextMenuAccessory>
