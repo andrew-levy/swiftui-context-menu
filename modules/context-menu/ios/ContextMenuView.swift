@@ -3,7 +3,9 @@ import ExpoModulesCore
 
 
 struct MenuItem {
-  var text: String
+    var text: String
+    var subtitle: String?
+    var image: UIImage?
 }
 
 struct ContextMenuView: ExpoSwiftUI.View {
@@ -14,7 +16,7 @@ struct ContextMenuView: ExpoSwiftUI.View {
     if #available(iOS 16.0, *) {
       let trigger = props.children?.filter { $0.view is ContextMenuTriggerView }.first
       let menuItems = props.children?.filter {
-        $0.view is ExpoSwiftUI.HostingView<ContextMenuItemProps, ContextMenuItemView>
+        $0.view is ContextMenuItemView
       }
       let preview = props.children?.filter {
         $0.view is ExpoSwiftUI.HostingView<ContextMenuPreviewProps, ContextMenuPreviewView>
@@ -24,10 +26,20 @@ struct ContextMenuView: ExpoSwiftUI.View {
       }.first
       
       let actions: [MenuItem] = (menuItems ?? []).compactMap { child in
-        if let child = child.view as? ExpoSwiftUI.HostingView<ContextMenuItemProps, ContextMenuItemView> {
-          return MenuItem(text: child.getProps().text) // Ensure `text` is a String
-        }
-        return nil
+          if let itemView = child.view as? ContextMenuItemView {
+              var title: String?
+              var subtitle: String?
+              for subview in itemView.subviews {
+                  if let titleView = subview as? ContextMenuItemTitleView {
+                      title = titleView.text
+                  } else if let subtitleView = subview as? ContextMenuItemSubtitleView {
+                      subtitle = subtitleView.text
+                  }
+              }
+              guard let title = title else { return nil }
+              return MenuItem(text: title, subtitle: subtitle)
+          }
+          return nil
       }
       
       if let accessory {
@@ -43,8 +55,8 @@ struct ContextMenuView: ExpoSwiftUI.View {
             trigger
               .contextMenu {
                 ForEach(menuItems ?? []) { item in
-                  if let item = item.view as? ExpoSwiftUI.HostingView<ContextMenuItemProps, ContextMenuItemView> {
-                    Button(item.getProps().text) {}
+                  if let item = item.view as? ContextMenuItemView {
+                    Button(item.text) {}
                   }
                 }
               } preview: { preview }
@@ -52,8 +64,8 @@ struct ContextMenuView: ExpoSwiftUI.View {
             trigger
               .contextMenu {
                 ForEach(menuItems ?? []) { item in
-                  if let item = item.view as? ExpoSwiftUI.HostingView<ContextMenuItemProps, ContextMenuItemView> {
-                    Button(item.getProps().text) {}
+                  if let item = item.view as? ContextMenuItemView {
+                    Button(item.text) {}
                   }
                 }
               }
@@ -72,17 +84,27 @@ class ContextMenuProps: ExpoSwiftUI.ViewProps {
   
 }
 
-class ContextMenuItemProps: ExpoSwiftUI.ViewProps {
-  @Field var text: String
-}
-
-struct ContextMenuItemView: ExpoSwiftUI.View {
-  @EnvironmentObject var props: ContextMenuItemProps
-  var body: some View {
-    Children()
+class ContextMenuItemView: ExpoView {
+  var text: String = ""
+  required init(appContext: AppContext? = nil) {
+    super.init(appContext: appContext)
   }
 }
 
+class ContextMenuItemTitleView: ExpoView {
+  var text: String = ""
+  required init(appContext: AppContext? = nil) {
+    super.init(appContext: appContext)
+  }
+}
+
+
+class ContextMenuItemSubtitleView: ExpoView {
+  var text: String = ""
+  required init(appContext: AppContext? = nil) {
+    super.init(appContext: appContext)
+  }
+}
 
 class ContextMenuTriggerView: ExpoView {
   required init(appContext: AppContext? = nil) {

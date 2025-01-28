@@ -6,7 +6,8 @@
       "ContextMenuTriggerModule",
       "ContextMenuItemModule",
       "ContextMenuPreviewModule",
-      "ContextMenuAccessoryModule"
+      "ContextMenuAccessoryModule",
+      "ContextMenuItemTitleModule"
     ]
   },
   "android": {

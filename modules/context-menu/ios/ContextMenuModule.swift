@@ -4,7 +4,7 @@ import SwiftUI
 public class ContextMenuAccessoryModule: Module {
   public func definition() -> ModuleDefinition {
     Name("ContextMenuAccessory")
-    View(ContextMenuAccessoryView.self)
+      View(ContextMenuAccessoryView.self)
   }
 }
 
@@ -18,7 +18,11 @@ public class ContextMenuPreviewModule: Module {
 public class ContextMenuItemModule: Module {
   public func definition() -> ModuleDefinition {
     Name("ContextMenuItem")
-    View(ContextMenuItemView.self)
+      View(ContextMenuItemView.self) {
+          Prop("text") { (view, text: String) in
+              view.text = text
+          }
+      }
   }
 }
 
@@ -37,3 +41,26 @@ public class ContextMenuModule: Module {
     View(ContextMenuView.self)
   }
 }
+
+public class ContextMenuItemTitleModule: Module {
+  public func definition() -> ModuleDefinition {
+    Name("ContextMenuItemTitle")
+    View(ContextMenuItemTitleView.self) {
+      Prop("text") { (view, text: String) in
+        view.text = text
+      }
+    }
+  }
+}
+
+public class ContextMenuItemSubtitleModule: Module {
+  public func definition() -> ModuleDefinition {
+    Name("ContextMenuItemTitle")
+    View(ContextMenuItemTitleView.self) {
+      Prop("text") { (view, text: String) in
+        view.text = text
+      }
+    }
+  }
+}
+

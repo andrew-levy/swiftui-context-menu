@@ -8,6 +8,7 @@ import {
   ContextMenuItem,
   ContextMenuAccessory,
   ContextMenuPreview,
+  ContextMenuItemTitle,
 } from "@/modules/context-menu";
 
 export default function HomeScreen() {
@@ -25,8 +26,10 @@ export default function HomeScreen() {
         <ContextMenuTrigger>
           <ThemedText style={{ padding: 10 }}>With Accessory</ThemedText>
         </ContextMenuTrigger>
-        <ContextMenuItem text="item 1" />
-        <ContextMenuItem text="item 2" />
+        <ContextMenuItem>
+          <ContextMenuItemTitle>Hello from children</ContextMenuItemTitle>
+        </ContextMenuItem>
+        <ContextMenuItem text='item 2' />
         <ContextMenuAccessory>
           <Reactions />
         </ContextMenuAccessory>
@@ -36,17 +39,25 @@ export default function HomeScreen() {
         <ContextMenuTrigger>
           <ThemedText style={{ padding: 10 }}>Basic</ThemedText>
         </ContextMenuTrigger>
-        <ContextMenuItem text="item 3" />
-        <ContextMenuItem text="item 4" />
+        <ContextMenuItem text='item 3' />
+        <ContextMenuItem text='item 4' />
       </ContextMenu>
 
       <ContextMenu>
         <ContextMenuTrigger>
           <ThemedText style={{ padding: 10 }}>With Preview</ThemedText>
         </ContextMenuTrigger>
-        <ContextMenuItem text="item 5" />
-        <ContextMenuItem text="item 6" />
-        <ContextMenuPreview style={{ width: 400, height: 400 }}>
+        <ContextMenuItem text='item 5' />
+        <ContextMenuItem text='item 6' />
+        <ContextMenuPreview
+          style={{
+            width: 400,
+            height: 400,
+            alignItems: "flex-start",
+            justifyContent: "flex-start",
+            backgroundColor: "red",
+          }}
+        >
           <ThemedText style={{ padding: 10 }}>
             This is the preview content
           </ThemedText>
