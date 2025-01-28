@@ -56,7 +56,7 @@ struct ContextMenuView: ExpoSwiftUI.View {
               .contextMenu {
                 ForEach(menuItems ?? []) { item in
                   if let item = item.view as? ContextMenuItemView {
-                    Button(item.text) {}
+                    Button(item.title) {}
                   }
                 }
               } preview: { preview }
@@ -65,7 +65,7 @@ struct ContextMenuView: ExpoSwiftUI.View {
               .contextMenu {
                 ForEach(menuItems ?? []) { item in
                   if let item = item.view as? ContextMenuItemView {
-                    Button(item.text) {}
+                    Button(item.title) {}
                   }
                 }
               }
@@ -85,7 +85,7 @@ class ContextMenuProps: ExpoSwiftUI.ViewProps {
 }
 
 class ContextMenuItemView: ExpoView {
-  var text: String = ""
+  var title: String = ""
   required init(appContext: AppContext? = nil) {
     super.init(appContext: appContext)
   }

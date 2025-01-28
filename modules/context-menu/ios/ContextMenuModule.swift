@@ -20,7 +20,7 @@ public class ContextMenuItemModule: Module {
     Name("ContextMenuItem")
       View(ContextMenuItemView.self) {
           Prop("text") { (view, text: String) in
-              view.text = text
+              view.title = text
           }
       }
   }
@@ -55,8 +55,8 @@ public class ContextMenuItemTitleModule: Module {
 
 public class ContextMenuItemSubtitleModule: Module {
   public func definition() -> ModuleDefinition {
-    Name("ContextMenuItemTitle")
-    View(ContextMenuItemTitleView.self) {
+    Name("ContextMenuItemSubtitle")
+    View(ContextMenuItemSubtitleView.self) {
       Prop("text") { (view, text: String) in
         view.text = text
       }
