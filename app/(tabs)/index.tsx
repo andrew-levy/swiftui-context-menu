@@ -44,16 +44,28 @@ export default function HomeScreen() {
         <ContextMenuTrigger>
           <ThemedText style={{ padding: 10 }}>Basic</ThemedText>
         </ContextMenuTrigger>
-        <ContextMenuItem text='item 3' />
-        <ContextMenuItem text='item 4' />
+        <ContextMenuItem destructive={true}>
+          <ContextMenuItemTitle>Basic Item 1</ContextMenuItemTitle>
+          <ContextMenuItemSubtitle>Subtitle here!</ContextMenuItemSubtitle>
+        </ContextMenuItem>
+        <ContextMenuItem>
+          <ContextMenuItemTitle>Basic Item 2</ContextMenuItemTitle>
+          <ContextMenuItemSubtitle>Subtitle there...</ContextMenuItemSubtitle>
+        </ContextMenuItem>
       </ContextMenu>
 
       <ContextMenu>
         <ContextMenuTrigger>
           <ThemedText style={{ padding: 10 }}>With Preview</ThemedText>
         </ContextMenuTrigger>
-        <ContextMenuItem text='item 5' />
-        <ContextMenuItem text='item 6' />
+        <ContextMenuItem>
+          <ContextMenuItemTitle>With Preview Item 1</ContextMenuItemTitle>
+          <ContextMenuItemSubtitle>Subtitle here!</ContextMenuItemSubtitle>
+        </ContextMenuItem>
+        <ContextMenuItem>
+          <ContextMenuItemTitle>With Preview Item 2</ContextMenuItemTitle>
+          <ContextMenuItemSubtitle>Subtitle there...</ContextMenuItemSubtitle>
+        </ContextMenuItem>
         <ContextMenuPreview
           style={{
             width: 400,

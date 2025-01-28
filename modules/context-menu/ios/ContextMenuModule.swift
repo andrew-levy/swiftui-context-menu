@@ -22,6 +22,9 @@ public class ContextMenuItemModule: Module {
           Prop("text") { (view, text: String) in
               view.title = text
           }
+          Prop("destructive") { (view, destructive: Bool) in
+              view.destructive = destructive
+          }
       }
   }
 }
