@@ -111,26 +111,7 @@ struct ContextMenuView: ExpoSwiftUI.View {
     }
   }
 }
-
-// Get the correct view to render based on the item's `type`.
-// Avoids creating a native view for each option.
-func getMenuItem(item: ContextMenuItemView) -> AnyView {
-  switch(item.type) {
-  case "button":
-    return AnyView(Button(item.title) {})
-  case "text":
-    return AnyView(Text(item.title))
-  case "divider":
-    return AnyView(Divider())
-  case "toggle":
-    return AnyView(Toggle(isOn: .constant(true), label: {
-      Text(item.title)
-    }))
-  default:
-    return AnyView(Text(item.title))
-  }
-}
-
+ 
 
 class ContextMenuProps: ExpoSwiftUI.ViewProps {
   
