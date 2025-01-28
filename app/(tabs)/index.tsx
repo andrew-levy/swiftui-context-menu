@@ -1,63 +1,65 @@
-import { Image, StyleSheet, Platform } from 'react-native';
-
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+import { Image, StyleSheet } from "react-native";
+import ParallaxScrollView from "@/components/ParallaxScrollView";
+import { ThemedText } from "@/components/ThemedText";
+import Reactions from "@/components/Reactions";
+import {
+  ContextMenu,
+  ContextMenuTrigger,
+  ContextMenuItem,
+  ContextMenuAccessory,
+  ContextMenuPreview,
+} from "@/modules/context-menu";
 
 export default function HomeScreen() {
   return (
     <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
+      headerBackgroundColor={{ light: "#A1CEDC", dark: "#1D3D47" }}
       headerImage={
         <Image
-          source={require('@/assets/images/partial-react-logo.png')}
+          source={require("@/assets/images/partial-react-logo.png")}
           style={styles.reactLogo}
         />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12'
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          Tap the Explore tab to learn more about what's included in this starter app.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{' '}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
+      }
+    >
+      <ContextMenu>
+        <ContextMenuTrigger>
+          <ThemedText style={{ padding: 10 }}>With Accessory</ThemedText>
+        </ContextMenuTrigger>
+        <ContextMenuItem text="item 1" />
+        <ContextMenuItem text="item 2" />
+        <ContextMenuAccessory>
+          <Reactions />
+        </ContextMenuAccessory>
+      </ContextMenu>
+
+      <ContextMenu>
+        <ContextMenuTrigger>
+          <ThemedText style={{ padding: 10 }}>Basic</ThemedText>
+        </ContextMenuTrigger>
+        <ContextMenuItem text="item 3" />
+        <ContextMenuItem text="item 4" />
+      </ContextMenu>
+
+      <ContextMenu>
+        <ContextMenuTrigger>
+          <ThemedText style={{ padding: 10 }}>With Preview</ThemedText>
+        </ContextMenuTrigger>
+        <ContextMenuItem text="item 5" />
+        <ContextMenuItem text="item 6" />
+        <ContextMenuPreview style={{ width: 400, height: 400 }}>
+          <ThemedText style={{ padding: 10 }}>
+            This is the preview content
+          </ThemedText>
+        </ContextMenuPreview>
+      </ContextMenu>
     </ParallaxScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 8,
   },
   stepContainer: {
@@ -69,6 +71,6 @@ const styles = StyleSheet.create({
     width: 290,
     bottom: 0,
     left: 0,
-    position: 'absolute',
+    position: "absolute",
   },
 });
