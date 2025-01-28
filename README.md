@@ -7,7 +7,7 @@
 2. Prebuild the app
 
 ```bash
-npx expo prebuild -p ios
+npx expo prebuild -p ios --clean
 ```
 
 3. Run it
