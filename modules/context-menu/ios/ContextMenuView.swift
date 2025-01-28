@@ -37,7 +37,7 @@ struct ContextMenuView: ExpoSwiftUI.View {
                   }
               }
               guard let title = title else { return nil }
-              return MenuItem(text: title, subtitle: subtitle)
+            return MenuItem(text: title, subtitle: subtitle)
           }
           return nil
       }
@@ -56,7 +56,7 @@ struct ContextMenuView: ExpoSwiftUI.View {
               .contextMenu {
                 ForEach(menuItems ?? []) { item in
                   if let item = item.view as? ContextMenuItemView {
-                    Button(item.title) {}
+                    getMenuItem(item: item)
                   }
                 }
               } preview: { preview }
@@ -65,7 +65,7 @@ struct ContextMenuView: ExpoSwiftUI.View {
               .contextMenu {
                 ForEach(menuItems ?? []) { item in
                   if let item = item.view as? ContextMenuItemView {
-                    Button(item.title) {}
+                    getMenuItem(item: item)
                   }
                 }
               }
@@ -78,6 +78,24 @@ struct ContextMenuView: ExpoSwiftUI.View {
   }
 }
 
+// Get the correct view to render based on the item's `type`.
+// Avoids creating a native view for each option.
+func getMenuItem(item: ContextMenuItemView) -> AnyView {
+  switch(item.type) {
+  case "button":
+    return AnyView(Button(item.title) {})
+  case "text":
+    return AnyView(Text(item.title))
+  case "divider":
+    return AnyView(Divider())
+  case "toggle":
+    return AnyView(Toggle(isOn: .constant(true), label: {
+      Text(item.title)
+    }))
+  default:
+    return AnyView(Text(item.title))
+  }
+}
 
 
 class ContextMenuProps: ExpoSwiftUI.ViewProps {
@@ -86,6 +104,7 @@ class ContextMenuProps: ExpoSwiftUI.ViewProps {
 
 class ContextMenuItemView: ExpoView {
   var title: String = ""
+  var type: String = ""
   required init(appContext: AppContext? = nil) {
     super.init(appContext: appContext)
   }
