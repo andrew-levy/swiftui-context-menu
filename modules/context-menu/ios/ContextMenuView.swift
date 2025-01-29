@@ -2,10 +2,52 @@ import SwiftUI
 import ExpoModulesCore
 
 
-struct MenuItem {
+struct MenuItem: Identifiable, Hashable {
+    let id = UUID()
     var text: String
     var subtitle: String?
     var image: UIImage?
+    var actionKey: String?
+    var destructive: Bool? = false
+    
+    // UIImage isn't Hashable, so we'll exclude it from hash calculation
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+        hasher.combine(text)
+        hasher.combine(subtitle)
+        hasher.combine(actionKey)
+    }
+    
+    static func == (lhs: MenuItem, rhs: MenuItem) -> Bool {
+        lhs.id == rhs.id
+    }
+}
+
+struct ContextMenuContent: View {
+    let actions: [MenuItem]
+    
+    var body: some View {
+        ForEach(actions, id: \.self) { item in
+            Button(role: item.destructive == true ? .destructive : nil, action: {}) {
+                if let image = item.image {
+                    Label(
+                        title: {
+                            Text(item.text)
+                            if let subtitle = item.subtitle {
+                                Text(subtitle)
+                            }
+                        },
+                        icon: { Image(uiImage: image) }
+                    )
+                } else {
+                    Text(item.text)
+                    if let subtitle = item.subtitle {
+                        Text(subtitle)
+                    }
+                }
+            }
+        }
+    }
 }
 
 struct ContextMenuView: ExpoSwiftUI.View {
@@ -37,7 +79,7 @@ struct ContextMenuView: ExpoSwiftUI.View {
                   }
               }
               guard let title = title else { return nil }
-            return MenuItem(text: title, subtitle: subtitle)
+              return MenuItem(text: title, subtitle: subtitle, destructive: itemView.destructive)
           }
           return nil
       }
@@ -52,22 +94,14 @@ struct ContextMenuView: ExpoSwiftUI.View {
       } else {
         if let trigger {
           if let preview {
-            trigger
+             trigger
               .contextMenu {
-                ForEach(menuItems ?? []) { item in
-                  if let item = item.view as? ContextMenuItemView {
-                    getMenuItem(item: item)
-                  }
-                }
+                  ContextMenuContent(actions: actions)
               } preview: { preview }
           } else {
             trigger
               .contextMenu {
-                ForEach(menuItems ?? []) { item in
-                  if let item = item.view as? ContextMenuItemView {
-                    getMenuItem(item: item)
-                  }
-                }
+                  ContextMenuContent(actions: actions)
               }
           }
         }
@@ -78,25 +112,6 @@ struct ContextMenuView: ExpoSwiftUI.View {
   }
 }
 
-// Get the correct view to render based on the item's `type`.
-// Avoids creating a native view for each option.
-func getMenuItem(item: ContextMenuItemView) -> AnyView {
-  switch(item.type) {
-  case "button":
-    return AnyView(Button(item.title) {})
-  case "text":
-    return AnyView(Text(item.title))
-  case "divider":
-    return AnyView(Divider())
-  case "toggle":
-    return AnyView(Toggle(isOn: .constant(true), label: {
-      Text(item.title)
-    }))
-  default:
-    return AnyView(Text(item.title))
-  }
-}
-
 
 class ContextMenuProps: ExpoSwiftUI.ViewProps {
   
@@ -104,7 +119,9 @@ class ContextMenuProps: ExpoSwiftUI.ViewProps {
 
 class ContextMenuItemView: ExpoView {
   var title: String = ""
-  var type: String = ""
+  var image: UIImage?
+  var actionKey: String?
+  var destructive: Bool? = false
   required init(appContext: AppContext? = nil) {
     super.init(appContext: appContext)
   }
