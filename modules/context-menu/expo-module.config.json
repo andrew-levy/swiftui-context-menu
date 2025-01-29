@@ -14,7 +14,8 @@
       "ContextMenuSubModule",
       "ContextMenuSubTriggerModule",
       "ContextMenuItemIconModule",
-      "ContextMenuLabelModule"
+      "ContextMenuLabelModule",
+      "ContextMenuGroupModule"
     ]
   },
   "android": {

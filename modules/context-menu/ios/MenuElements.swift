@@ -13,6 +13,7 @@ enum MenuElement {
 
 struct MenuGroup {
   var label: String? = ""
+  var horizontal: Bool = false
   var children: [MenuElement]
 }
 

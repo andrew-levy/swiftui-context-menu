@@ -15,6 +15,7 @@ const _ContextMenuItemSubtitle = requireNativeView("ContextMenuItemSubtitle");
 const ContextMenuSub = requireNativeView("ContextMenuSub");
 const ContextMenuSubTrigger = requireNativeView("ContextMenuSubTrigger");
 const _ContextMenuLabel = requireNativeView("ContextMenuLabel");
+const ContextMenuGroup = requireNativeView("ContextMenuGroup");
 
 function ContextMenuLabel(props: { children: React.ReactNode }) {
   return (
@@ -91,4 +92,5 @@ export {
   ContextMenuContent,
   ContextMenuSubContent,
   ContextMenuLabel,
+  ContextMenuGroup,
 };
