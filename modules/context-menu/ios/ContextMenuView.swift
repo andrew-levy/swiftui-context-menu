@@ -4,11 +4,12 @@ import ExpoModulesCore
 
 struct MenuItem: Identifiable, Hashable {
     let id = UUID()
-    var text: String
+    var text: String?
     var subtitle: String?
     var image: UIImage?
     var actionKey: String?
     var destructive: Bool? = false
+    var separator: Bool? = false
     
     // UIImage isn't Hashable, so we'll exclude it from hash calculation
     func hash(into hasher: inout Hasher) {
@@ -27,26 +28,30 @@ struct ContextMenuContent: View {
     let actions: [MenuItem]
     
     var body: some View {
-        ForEach(actions, id: \.self) { item in
-            Button(role: item.destructive == true ? .destructive : nil, action: {}) {
-                if let image = item.image {
-                    Label(
-                        title: {
-                            Text(item.text)
-                            if let subtitle = item.subtitle {
-                                Text(subtitle)
-                            }
-                        },
-                        icon: { Image(uiImage: image) }
-                    )
-                } else {
-                    Text(item.text)
-                    if let subtitle = item.subtitle {
-                        Text(subtitle)
-                    }
-                }
+      ForEach(actions, id: \.self) { item in
+        if (item.separator == true) {
+          Divider()
+        } else {
+          Button(role: item.destructive == true ? .destructive : nil, action: {}) {
+            if let image = item.image {
+              Label(
+                title: {
+                  Text(item.text ?? "")
+                  if let subtitle = item.subtitle {
+                    Text(subtitle)
+                  }
+                },
+                icon: { Image(uiImage: image) }
+              )
+            } else {
+              Text(item.text ?? "")
+              if let subtitle = item.subtitle {
+                Text(subtitle)
+              }
             }
+          }
         }
+      }
     }
 }
 
@@ -58,7 +63,8 @@ struct ContextMenuView: ExpoSwiftUI.View {
     if #available(iOS 16.0, *) {
       let trigger = props.children?.filter { $0.view is ContextMenuTriggerView }.first
       let menuItems = props.children?.filter {
-        $0.view is ContextMenuItemView
+        $0.view is ContextMenuItemView ||
+        $0.view is ContextMenuSeparatorView
       }
       let preview = props.children?.filter {
         $0.view is ExpoSwiftUI.HostingView<ContextMenuPreviewProps, ContextMenuPreviewView>
@@ -68,20 +74,23 @@ struct ContextMenuView: ExpoSwiftUI.View {
       }.first
       
       let actions: [MenuItem] = (menuItems ?? []).compactMap { child in
-          if let itemView = child.view as? ContextMenuItemView {
-              var title: String?
-              var subtitle: String?
-              for subview in itemView.subviews {
-                  if let titleView = subview as? ContextMenuItemTitleView {
-                      title = titleView.text
-                  } else if let subtitleView = subview as? ContextMenuItemSubtitleView {
-                      subtitle = subtitleView.text
-                  }
-              }
-              guard let title = title else { return nil }
-              return MenuItem(text: title, subtitle: subtitle, destructive: itemView.destructive)
+        if child.view is ContextMenuSeparatorView {
+          return MenuItem(separator: true)
+        }
+        if let itemView = child.view as? ContextMenuItemView {
+          var title: String?
+          var subtitle: String?
+          for subview in itemView.subviews {
+            if let titleView = subview as? ContextMenuItemTitleView {
+              title = titleView.text
+            } else if let subtitleView = subview as? ContextMenuItemSubtitleView {
+              subtitle = subtitleView.text
+            }
           }
-          return nil
+          guard let title = title else { return nil }
+          return MenuItem(text: title, subtitle: subtitle, destructive: itemView.destructive)
+        }
+        return nil
       }
       
       if let accessory {
@@ -112,6 +121,11 @@ struct ContextMenuView: ExpoSwiftUI.View {
   }
 }
 
+class ContextMenuSeparatorView: ExpoView {
+  required init(appContext: AppContext? = nil) {
+    super.init(appContext: appContext)
+  }
+}
 
 class ContextMenuProps: ExpoSwiftUI.ViewProps {
   

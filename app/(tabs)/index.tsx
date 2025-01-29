@@ -10,6 +10,7 @@ import {
   ContextMenuPreview,
   ContextMenuItemTitle,
   ContextMenuItemSubtitle,
+  ContextMenuSeparator,
 } from "@/modules/context-menu";
 
 export default function HomeScreen() {
@@ -31,6 +32,7 @@ export default function HomeScreen() {
           <ContextMenuItemTitle>Hello from children</ContextMenuItemTitle>
           <ContextMenuItemSubtitle>Subtitle here!</ContextMenuItemSubtitle>
         </ContextMenuItem>
+        <ContextMenuSeparator />
         <ContextMenuItem>
           <ContextMenuItemTitle>Hello from children 2</ContextMenuItemTitle>
           <ContextMenuItemSubtitle>Subtitle there...</ContextMenuItemSubtitle>
@@ -48,6 +50,7 @@ export default function HomeScreen() {
           <ContextMenuItemTitle>Basic Item 1</ContextMenuItemTitle>
           <ContextMenuItemSubtitle>Subtitle here!</ContextMenuItemSubtitle>
         </ContextMenuItem>
+        <ContextMenuSeparator />
         <ContextMenuItem>
           <ContextMenuItemTitle>Basic Item 2</ContextMenuItemTitle>
           <ContextMenuItemSubtitle>Subtitle there...</ContextMenuItemSubtitle>
@@ -62,6 +65,7 @@ export default function HomeScreen() {
           <ContextMenuItemTitle>With Preview Item 1</ContextMenuItemTitle>
           <ContextMenuItemSubtitle>Subtitle here!</ContextMenuItemSubtitle>
         </ContextMenuItem>
+        <ContextMenuSeparator />
         <ContextMenuItem>
           <ContextMenuItemTitle>With Preview Item 2</ContextMenuItemTitle>
           <ContextMenuItemSubtitle>Subtitle there...</ContextMenuItemSubtitle>
