@@ -6,9 +6,14 @@ enum MenuElement {
   case item(MenuItem)
   case separator
   case label(MenuLabel)
-  case group
+  case group(MenuGroup)
   case checkboxItem(MenuCheckboxItem)
   case submenu(SubMenuItem)
+}
+
+struct MenuGroup {
+  var label: String? = ""
+  var children: [MenuElement]
 }
 
 struct MenuItemShared {
@@ -132,12 +137,16 @@ struct ContextMenuView: ExpoSwiftUI.View {
               icon: menuItem.icon
             )
           }
-        case .group:
-          AnyView(EmptyView())  // TODO implement
+        case .group(let group):
+            Section(header: Text(group.label ?? "").foregroundColor(.secondary)) {
+                renderItems(actions: group.children)
+            }
         case .checkboxItem(let checkboxItem):
           ToggleView(checkboxItem: checkboxItem)
         case .label(let label):
-          AnyView(EmptyView())  // TODO implement
+            Text(label.text)
+                .foregroundColor(.secondary)
+                .font(.footnote)
         case .submenu(let submenu):
           Menu {
             renderItems(actions: submenu.children)
@@ -185,11 +194,8 @@ struct ContextMenuView: ExpoSwiftUI.View {
             onSelect: itemView.onSelect, icon: item.icon))
       }
       if let subView = child as? ContextMenuSubView {
-        print("submenu...")
-        let subTrigger = subView.subviews.first(where: { $0 is ContextMenuSubTriggerView })
-        print("has subtrigger \(String(describing: subTrigger))")
         guard
-          let subTrigger = subTrigger,
+          let subTrigger = subView.subviews.first(where: { $0 is ContextMenuSubTriggerView }) as? ContextMenuSubTriggerView,
           let item = getItemFromChildren(view: subTrigger)
         else {
           return nil
@@ -198,7 +204,9 @@ struct ContextMenuView: ExpoSwiftUI.View {
         return .submenu(
           SubMenuItem(
             text: item.text, subtitle: item.subtitle, image: item.image,
-            destructive: subView.destructive, children: mapItemsChildren(children: subView.subviews)
+            destructive: subView.destructive,
+            onSelect: subTrigger.onSelect,
+            children: mapItemsChildren(children: subView.subviews)
           ))
       }
       return nil

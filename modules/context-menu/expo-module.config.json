@@ -13,7 +13,8 @@
       "ContextMenuCheckboxItemModule",
       "ContextMenuSubModule",
       "ContextMenuSubTriggerModule",
-      "ContextMenuItemIconModule"
+      "ContextMenuItemIconModule",
+      "ContextMenuLabelModule"
     ]
   },
   "android": {

@@ -1,4 +1,5 @@
 import { requireNativeView } from "expo";
+import { Fragment } from "react";
 import { NativeSyntheticEvent } from "react-native";
 
 const ContextMenuTrigger = requireNativeView("ContextMenuTrigger");
@@ -13,6 +14,15 @@ const _ContextMenuItemTitle = requireNativeView("ContextMenuItemTitle");
 const _ContextMenuItemSubtitle = requireNativeView("ContextMenuItemSubtitle");
 const ContextMenuSub = requireNativeView("ContextMenuSub");
 const ContextMenuSubTrigger = requireNativeView("ContextMenuSubTrigger");
+const _ContextMenuLabel = requireNativeView("ContextMenuLabel");
+
+function ContextMenuLabel(props: { children: React.ReactNode }) {
+  return (
+    <_ContextMenuLabel
+      text={typeof props.children === "string" ? props.children : undefined}
+    />
+  );
+}
 
 function ContextMenuCheckboxItem(props: {
   value: "on" | "off" | "mixed" | boolean;
@@ -57,6 +67,14 @@ function ContextMenuItemSubtitle(props: {
   );
 }
 
+const ContextMenuContent = (props: { children: React.ReactNode }) => {
+  return <Fragment>{props.children}</Fragment>;
+};
+
+const ContextMenuSubContent = (props: { children: React.ReactNode }) => {
+  return <Fragment>{props.children}</Fragment>;
+};
+
 export {
   ContextMenuTrigger,
   ContextMenu,
@@ -70,4 +88,7 @@ export {
   ContextMenuItemSubtitle,
   ContextMenuSub,
   ContextMenuSubTrigger,
+  ContextMenuContent,
+  ContextMenuSubContent,
+  ContextMenuLabel,
 };
