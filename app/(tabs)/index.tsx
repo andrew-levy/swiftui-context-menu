@@ -18,6 +18,7 @@ import {
   ContextMenuSub,
   ContextMenuSubTrigger,
   ContextMenuItemIcon,
+  ContextMenuLabel,
 } from "@/modules/context-menu";
 import { useState } from "react";
 
@@ -128,6 +129,8 @@ export default function HomeScreen() {
           </ThemedText>
         </ContextMenuTrigger>
 
+        <ContextMenuLabel>Label here!</ContextMenuLabel>
+
         <ContextMenuItem onSelect={() => console.log("main item")}>
           <ContextMenuItemTitle>Main Menu Item</ContextMenuItemTitle>
           <ContextMenuItemSubtitle>With a subtitle</ContextMenuItemSubtitle>
@@ -136,7 +139,7 @@ export default function HomeScreen() {
         <ContextMenuSeparator />
 
         <ContextMenuSub>
-          <ContextMenuSubTrigger>
+          <ContextMenuSubTrigger onSelect={() => console.log("hi")}>
             <ContextMenuItemTitle>Advanced Options</ContextMenuItemTitle>
             <ContextMenuItemSubtitle>Click for more...</ContextMenuItemSubtitle>
           </ContextMenuSubTrigger>
