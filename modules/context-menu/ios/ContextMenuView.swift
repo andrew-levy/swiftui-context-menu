@@ -1,82 +1,103 @@
-import SwiftUI
 import ExpoModulesCore
+import SwiftUI
 
+// anything that could be a menu item
+enum MenuElement {
+    case item(MenuItem)
+    case separator
+    case label(MenuLabel)
+    case group
+    case checkboxItem(MenuCheckboxItem)
+}
 
-struct MenuItem: Identifiable, Hashable {
-    let id = UUID()
+struct MenuItem {
     var text: String?
     var subtitle: String?
     var image: UIImage?
     var actionKey: String?
     var destructive: Bool? = false
-    var separator: Bool? = false
-    
-    // UIImage isn't Hashable, so we'll exclude it from hash calculation
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(id)
-        hasher.combine(text)
-        hasher.combine(subtitle)
-        hasher.combine(actionKey)
-    }
-    
-    static func == (lhs: MenuItem, rhs: MenuItem) -> Bool {
-        lhs.id == rhs.id
-    }
+}
+
+struct MenuCheckboxItem {
+    var text: String?
+    var subtitle: String?
+    var image: UIImage?
+    var actionKey: String?
+    var destructive: Bool? = false
+    var checked: Bool? = false
+}
+
+struct MenuLabel {
+    var text: String
+}
+
+struct MenuSeparator {
 }
 
 struct ContextMenuContent: View {
-    let actions: [MenuItem]
-    
+    let actions: [MenuElement]
+
     var body: some View {
-      ForEach(actions, id: \.self) { item in
-        if (item.separator == true) {
-          Divider()
-        } else {
-          Button(role: item.destructive == true ? .destructive : nil, action: {}) {
-            if let image = item.image {
-              Label(
-                title: {
-                  Text(item.text ?? "")
-                  if let subtitle = item.subtitle {
-                    Text(subtitle)
-                  }
-                },
-                icon: { Image(uiImage: image) }
-              )
-            } else {
-              Text(item.text ?? "")
-              if let subtitle = item.subtitle {
-                Text(subtitle)
-              }
+        ForEach(Array(actions.enumerated()), id: \.offset) { _, element in
+            switch element {
+            case .separator:
+                Divider()
+            case .item(let menuItem):
+                Button(role: menuItem.destructive == true ? .destructive : nil, action: {}) {
+                    if let image = menuItem.image {
+                        Label(
+                            title: {
+                                Text(menuItem.text ?? "")
+                                if let subtitle = menuItem.subtitle {
+                                    Text(subtitle)
+                                }
+                            },
+                            icon: { Image(uiImage: image) }
+                        )
+                    } else {
+                        Text(menuItem.text ?? "")
+                        if let subtitle = menuItem.subtitle {
+                            Text(subtitle)
+                        }
+                    }
+                }
+            case .group:
+                AnyView(EmptyView()) // TODO implement
+            case .checkboxItem(let checkboxItem):
+                AnyView(EmptyView()) // TODO implement
+            case .label(let label):
+                AnyView(EmptyView()) // TODO implement
             }
-          }
         }
-      }
     }
 }
 
 struct ContextMenuView: ExpoSwiftUI.View {
   @EnvironmentObject var props: ContextMenuProps
-  
+
   var body: some View {
-    
+
     if #available(iOS 16.0, *) {
-      let trigger = props.children?.filter { $0.view is ContextMenuTriggerView }.first
-      let menuItems = props.children?.filter {
-        $0.view is ContextMenuItemView ||
-        $0.view is ContextMenuSeparatorView
-      }
+      var trigger: ExpoSwiftUI.Child?
+
       let preview = props.children?.filter {
         $0.view is ExpoSwiftUI.HostingView<ContextMenuPreviewProps, ContextMenuPreviewView>
       }.first
       let accessory = props.children?.filter {
         $0.view is ExpoSwiftUI.HostingView<ContextMenuAccessoryProps, ContextMenuAccessoryView>
       }.first
-      
-      let actions: [MenuItem] = (menuItems ?? []).compactMap { child in
-        if child.view is ContextMenuSeparatorView {
-          return MenuItem(separator: true)
+
+      let actions: [MenuElement] = (props.children ?? []).compactMap { child in
+        if let triggerChild = child.view is ContextMenuTriggerView ? child : nil {
+          trigger = triggerChild
+          return nil
         }
+        if child.view is ContextMenuSeparatorView {
+          return .separator
+        }
+          if let label = child.view as? ContextMenuLabelView {
+              return .label(MenuLabel(text: label.text))
+          }
         if let itemView = child.view as? ContextMenuItemView {
           var title: String?
           var subtitle: String?
@@ -88,32 +109,42 @@ struct ContextMenuView: ExpoSwiftUI.View {
             }
           }
           guard let title = title else { return nil }
-          return MenuItem(text: title, subtitle: subtitle, destructive: itemView.destructive)
+          return .item(MenuItem(text: title, subtitle: subtitle, destructive: itemView.destructive))
         }
         return nil
       }
-      
-      if let accessory {
-        ContextMenuWithAccessory(trigger: {
-          trigger
-        }, overlay: {
-          accessory
-        }, menuItems: actions)
-        .frame(height: trigger?.view.frame.height)
-      } else {
-        if let trigger {
+
+      if let trigger {
+        if let accessory {
+            // TODO deal with this later
+            AnyView(EmptyView())
+//          ContextMenuWithAccessory(
+//            trigger: {
+//              trigger
+//            },
+//            overlay: {
+//              accessory
+//            }, menuItems: actions
+//          )
+//          .frame(height: trigger.view.frame.height)
+        } else {
           if let preview {
-             trigger
+            trigger
               .contextMenu {
-                  ContextMenuContent(actions: actions)
-              } preview: { preview }
+                ContextMenuContent(actions: actions)
+              } preview: {
+                preview
+              }
           } else {
             trigger
               .contextMenu {
-                  ContextMenuContent(actions: actions)
+                ContextMenuContent(actions: actions)
               }
           }
+
         }
+      } else {
+        Children()
       }
     } else {
       Children()
@@ -128,7 +159,7 @@ class ContextMenuSeparatorView: ExpoView {
 }
 
 class ContextMenuProps: ExpoSwiftUI.ViewProps {
-  
+
 }
 
 class ContextMenuItemView: ExpoView {
@@ -148,7 +179,6 @@ class ContextMenuItemTitleView: ExpoView {
   }
 }
 
-
 class ContextMenuItemSubtitleView: ExpoView {
   var text: String = ""
   required init(appContext: AppContext? = nil) {
@@ -156,15 +186,22 @@ class ContextMenuItemSubtitleView: ExpoView {
   }
 }
 
-class ContextMenuTriggerView: ExpoView {
+class ContextMenuLabelView: ExpoView {
+  var text: String = ""
   required init(appContext: AppContext? = nil) {
     super.init(appContext: appContext)
   }
 }
 
 
+class ContextMenuTriggerView: ExpoView {
+  required init(appContext: AppContext? = nil) {
+    super.init(appContext: appContext)
+  }
+}
+
 class ContextMenuAccessoryProps: ExpoSwiftUI.ViewProps {
-  
+
 }
 
 struct ContextMenuAccessoryView: ExpoSwiftUI.View {
@@ -175,9 +212,8 @@ struct ContextMenuAccessoryView: ExpoSwiftUI.View {
 }
 
 class ContextMenuPreviewProps: ExpoSwiftUI.ViewProps {
-  
-}
 
+}
 
 struct ContextMenuPreviewView: ExpoSwiftUI.View {
   @EnvironmentObject var props: ContextMenuPreviewProps

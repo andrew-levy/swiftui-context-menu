@@ -67,6 +67,17 @@ public class ContextMenuItemSubtitleModule: Module {
   }
 }
 
+public class ContextMenuLabelModule: Module {
+  public func definition() -> ModuleDefinition {
+    Name("ContextMenuLabel")
+    View(ContextMenuLabelView.self) {
+      Prop("text") { (view, text: String) in
+        view.text = text
+      }
+    }
+  }
+}
+
 public class ContextMenuSeparatorModule: Module {
   public func definition() -> ModuleDefinition {
     Name("ContextMenuSeparator")
