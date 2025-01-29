@@ -7,6 +7,7 @@ const ContextMenuPreview = requireNativeView("ContextMenuPreview");
 const ContextMenuItem = requireNativeView("ContextMenuItem");
 const ContextMenuAccessory = requireNativeView("ContextMenuAccessory");
 const ContextMenuSeparator = requireNativeView("ContextMenuSeparator");
+const ContextMenuItemIcon = requireNativeView("ContextMenuItemIcon");
 const _ContextMenuCheckboxItem = requireNativeView("ContextMenuCheckboxItem");
 const _ContextMenuItemTitle = requireNativeView("ContextMenuItemTitle");
 const _ContextMenuItemSubtitle = requireNativeView("ContextMenuItemSubtitle");
@@ -61,6 +62,7 @@ export {
   ContextMenuItem,
   ContextMenuAccessory,
   ContextMenuSeparator,
+  ContextMenuItemIcon,
   ContextMenuCheckboxItem,
   ContextMenuItemTitle,
   ContextMenuItemSubtitle,

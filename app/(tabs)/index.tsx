@@ -12,6 +12,7 @@ import {
   ContextMenuItemSubtitle,
   ContextMenuSeparator,
   ContextMenuCheckboxItem,
+  ContextMenuItemIcon,
 } from "@/modules/context-menu";
 import { useState } from "react";
 
@@ -69,6 +70,7 @@ export default function HomeScreen() {
           <ContextMenuItemSubtitle>Subtitle here!</ContextMenuItemSubtitle>
         </ContextMenuCheckboxItem>
         <ContextMenuItem>
+          <ContextMenuItemIcon name="person.fill" />
           <ContextMenuItemTitle>Basic Item 2</ContextMenuItemTitle>
           <ContextMenuItemSubtitle>Subtitle there...</ContextMenuItemSubtitle>
         </ContextMenuItem>
