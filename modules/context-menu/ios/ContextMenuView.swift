@@ -223,7 +223,7 @@ struct ContextMenuView: ExpoSwiftUI.View {
           child.view
         }) ?? [])
 
-        if let accessory {
+        if accessory != nil {
             AnyView(EmptyView())//          ContextMenuWithAccessory(
             //          //            trigger: {
             //          //              trigger
@@ -233,8 +233,7 @@ struct ContextMenuView: ExpoSwiftUI.View {
             //          //            }, menuItems: actions
             //          //          )
             //          //          .frame(height: trigger.view.frame.height)
-        }
-        if let trigger {
+        } else if let trigger {
             if #unavailable(iOS 16.0) {
                 trigger
             } else if let preview {
