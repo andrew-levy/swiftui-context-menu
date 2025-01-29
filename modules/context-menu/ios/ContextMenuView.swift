@@ -57,6 +57,7 @@ struct SubMenuItem {
   var subtitle: String?
   var image: UIImage?
   var destructive: Bool? = false
+  var onSelect: EventDispatcher?
   var children: [MenuElement]
 }
 
@@ -68,31 +69,35 @@ struct MenuSeparator {
 }
 
 struct ButtonLabelView: View {
-  var menuItem: MenuItem
+  var text: String
+  var subtitle: String?
+  var image: UIImage?
+  var icon: MenuItemIcon?
+
   var body: some View {
-    if let image = menuItem.image {
+    if let image = image {
       Label(
         title: {
-          Text(menuItem.text)
-          if let subtitle = menuItem.subtitle {
+          Text(text)
+          if let subtitle = subtitle {
             Text(subtitle)
           }
         },
         icon: { Image(uiImage: image) }
       )
-    } else if let icon = menuItem.icon {
+    } else if let icon = icon {
       Label(
         title: {
-          Text(menuItem.text)
-          if let subtitle = menuItem.subtitle {
+          Text(text)
+          if let subtitle = subtitle {
             Text(subtitle)
           }
         },
         icon: { Image(systemName: icon.name) }
       )
     } else {
-      Text(menuItem.text)
-      if let subtitle = menuItem.subtitle {
+      Text(text)
+      if let subtitle = subtitle {
         Text(subtitle)
       }
     }
@@ -120,7 +125,12 @@ struct ContextMenuView: ExpoSwiftUI.View {
           Divider()
         case .item(let menuItem):
           Button(role: menuItem.destructive == true ? .destructive : nil, action: {}) {
-            ButtonLabelView(menuItem: menuItem)
+            ButtonLabelView(
+              text: menuItem.text,
+              subtitle: menuItem.subtitle,
+              image: menuItem.image,
+              icon: menuItem.icon
+            )
           }
         case .group:
           AnyView(EmptyView())  // TODO implement
@@ -129,14 +139,20 @@ struct ContextMenuView: ExpoSwiftUI.View {
         case .label(let label):
           AnyView(EmptyView())  // TODO implement
         case .submenu(let submenu):
-          Menu(
-            submenu.text,
-            content: {
-                let _ = print("submenu rendering: \(submenu.children)")
-//              Button("Test here") {}
-//               TODO why doesn't this work?
-                                      renderItems(actions: submenu.children)
-            }, primaryAction: {})
+          Menu {
+            renderItems(actions: submenu.children)
+          } label: {
+            ButtonLabelView(
+              text: submenu.text,
+              subtitle: submenu.subtitle,
+              image: submenu.image,
+              icon: nil
+            )
+          } primaryAction: {
+            if let onSelect = submenu.onSelect {
+              onSelect([:])
+            }
+          }
         }
       })
   }
@@ -178,13 +194,11 @@ struct ContextMenuView: ExpoSwiftUI.View {
         else {
           return nil
         }
-        let actualSubmenuChildren = subView.subviews
-        let subchildren = mapItemsChildren(children: actualSubmenuChildren)
-        print("submenu has everything...")
 
         return .submenu(
           SubMenuItem(
-            text: item.text, children: subchildren
+            text: item.text, subtitle: item.subtitle, image: item.image,
+            destructive: subView.destructive, children: mapItemsChildren(children: subView.subviews)
           ))
       }
       return nil
@@ -210,44 +224,44 @@ struct ContextMenuView: ExpoSwiftUI.View {
   }
 
   var body: some View {
-      // TODO fewer loops
-      let trigger = props.children?.first(where: { $0.view is ContextMenuTriggerView })
-      let preview = props.children?.filter {
-        $0.view is ExpoSwiftUI.HostingView<ContextMenuPreviewProps, ContextMenuPreviewView>
-      }.first
-      let accessory = props.children?.filter {
-        $0.view is ExpoSwiftUI.HostingView<ContextMenuAccessoryProps, ContextMenuAccessoryView>
-      }.first
+    // TODO fewer loops
+    let trigger = props.children?.first(where: { $0.view is ContextMenuTriggerView })
+    let preview = props.children?.filter {
+      $0.view is ExpoSwiftUI.HostingView<ContextMenuPreviewProps, ContextMenuPreviewView>
+    }.first
+    let accessory = props.children?.filter {
+      $0.view is ExpoSwiftUI.HostingView<ContextMenuAccessoryProps, ContextMenuAccessoryView>
+    }.first
 
-      let actions = mapItemsChildren(
-        children: props.children?.compactMap({ child in
-          child.view
-        }) ?? [])
-      
-        if let trigger {
-            if #unavailable(iOS 16.0) {
-                trigger
-            } else if let preview {
-              trigger
-                .contextMenu {
-                  renderItems(actions: actions)
-                } preview: {
-                  preview
-                }
-            } else {
-              trigger
-                .contextMenu {
-                  renderItems(actions: actions)
-                }
-            }
-        } else {
-            Children()
-        }
+    let actions = mapItemsChildren(
+      children: props.children?.compactMap({ child in
+        child.view
+      }) ?? [])
+
+    if let trigger {
+      if #unavailable(iOS 16.0) {
+        trigger
+      } else if let preview {
+        trigger
+          .contextMenu {
+            renderItems(actions: actions)
+          } preview: {
+            preview
+          }
+      } else {
+        trigger
+          .contextMenu {
+            renderItems(actions: actions)
+          }
+      }
+    } else {
+      Children()
+    }
   }
 }
 
 class ContextMenuProps: ExpoSwiftUI.ViewProps {
-
+  var onOpenChange = EventDispatcher()
 }
 // ICON
 class ContextMenuItemIconView: ExpoView {
@@ -285,8 +299,9 @@ class ContextMenuItemView: ExpoView {
 
 // SUB
 class ContextMenuSubViewProps: ExpoSwiftUI.ViewProps {
-  var textValue: String?
-  var destructive: Bool? = false
+  @Field var textValue: String?
+  @Field var destructive: Bool? = false
+  var onSelect = EventDispatcher()
 }
 
 class ContextMenuSubView: ExpoView {
