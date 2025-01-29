@@ -223,27 +223,25 @@ struct ContextMenuView: ExpoSwiftUI.View {
           child.view
         }) ?? [])
       
-      AnyView(EmptyView())
-
-//        if let trigger {
-//            if #unavailable(iOS 16.0) {
-//                trigger
-//            } else if let preview {
-//              trigger
-//                .contextMenu {
-//                  renderItems(actions: actions)
-//                } preview: {
-//                  preview
-//                }
-//            } else {
-//              trigger
-//                .contextMenu {
-//                  renderItems(actions: actions)
-//                }
-//            }
-//        } else {
-//            Children()
-//        }
+        if let trigger {
+            if #unavailable(iOS 16.0) {
+                trigger
+            } else if let preview {
+              trigger
+                .contextMenu {
+                  renderItems(actions: actions)
+                } preview: {
+                  preview
+                }
+            } else {
+              trigger
+                .contextMenu {
+                  renderItems(actions: actions)
+                }
+            }
+        } else {
+            Children()
+        }
   }
 }
 
