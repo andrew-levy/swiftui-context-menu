@@ -12,18 +12,27 @@ const _ContextMenuItemTitle = requireNativeView("ContextMenuItemTitle");
 const _ContextMenuItemSubtitle = requireNativeView("ContextMenuItemSubtitle");
 
 function ContextMenuCheckboxItem(props: {
-  value: string;
-  text: string;
-  onValueChange: (value: string) => void;
+  value: "on" | "off" | "mixed" | boolean;
+  textValue?: string;
+  onValueChange: (value: "on" | "off") => void;
+  children: React.ReactNode;
 }) {
   return (
     <_ContextMenuCheckboxItem
-      value={props.value}
-      text={props.text}
+      value={
+        typeof props.value === "boolean"
+          ? props.value
+            ? "on"
+            : "off"
+          : props.value
+      }
       onValueChange={(e: NativeSyntheticEvent<{ value: string }>) => {
         props.onValueChange(e.nativeEvent.value);
       }}
-    />
+      textValue={props.textValue}
+    >
+      {props.children}
+    </_ContextMenuCheckboxItem>
   );
 }
 

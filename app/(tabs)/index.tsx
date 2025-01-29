@@ -16,7 +16,7 @@ import {
 import { useState } from "react";
 
 export default function HomeScreen() {
-  const [checked, setChecked] = useState("on");
+  const [checked, setChecked] = useState<"on" | "off">("on");
   const [darkMode, setDarkMode] = useState("off");
   return (
     <ParallaxScrollView
@@ -60,12 +60,14 @@ export default function HomeScreen() {
         <ContextMenuSeparator />
         <ContextMenuCheckboxItem
           value={checked}
-          text={"Checkbox Item"}
           onValueChange={(v) => {
             console.log("onValueChange", v);
-            setChecked(v ? `on` : `off`);
+            setChecked(v);
           }}
-        />
+        >
+          <ContextMenuItemTitle>Checkbox Item</ContextMenuItemTitle>
+          <ContextMenuItemSubtitle>Subtitle here!</ContextMenuItemSubtitle>
+        </ContextMenuCheckboxItem>
         <ContextMenuItem>
           <ContextMenuItemTitle>Basic Item 2</ContextMenuItemTitle>
           <ContextMenuItemSubtitle>Subtitle there...</ContextMenuItemSubtitle>
