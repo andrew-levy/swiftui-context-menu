@@ -1,123 +1,6 @@
 import ExpoModulesCore
 import SwiftUI
 
-// anything that could be a menu item
-enum MenuElement {
-  case item(MenuItem)
-  case separator
-  case label(MenuLabel)
-  case group(MenuGroup)
-  case checkboxItem(MenuCheckboxItem)
-  case submenu(SubMenuItem)
-}
-
-struct MenuGroup {
-  var label: String? = ""
-  var children: [MenuElement]
-}
-
-struct MenuItemShared {
-  var text: String = ""
-  var subtitle: String?
-  var image: UIImage?
-  var icon: MenuItemIcon?
-}
-
-struct MenuItemIcon {
-  var name: String
-  // add more properties like colors, ...
-}
-
-struct MenuItem {
-  var text: String = ""
-  var subtitle: String?
-  var image: UIImage?
-  var destructive: Bool? = false
-  var onSelect: EventDispatcher
-  var icon: MenuItemIcon?
-}
-
-class MenuCheckboxItem: ObservableObject {
-  var text: String
-  var subtitle: String?
-  var image: UIImage?
-  var destructive: Bool? = false
-  @Published var checked: Bool = false
-  var onValueChange: EventDispatcher
-  init(
-    text: String, subtitle: String? = nil, image: UIImage? = nil, destructive: Bool? = nil,
-    checked: Bool = false, onValueChange: EventDispatcher
-  ) {
-    self.text = text
-    self.subtitle = subtitle
-    self.image = image
-    self.destructive = destructive
-    self.checked = checked
-    self.onValueChange = onValueChange
-  }
-}
-
-struct SubMenuItem {
-  var text: String
-  var subtitle: String?
-  var image: UIImage?
-  var destructive: Bool? = false
-  var onSelect: EventDispatcher?
-  var children: [MenuElement]
-}
-
-struct MenuLabel {
-  var text: String
-}
-
-struct MenuSeparator {
-}
-
-struct ButtonLabelView: View {
-  var text: String
-  var subtitle: String?
-  var image: UIImage?
-  var icon: MenuItemIcon?
-
-  var body: some View {
-    if let image = image {
-      Label(
-        title: {
-          Text(text)
-          if let subtitle = subtitle {
-            Text(subtitle)
-          }
-        },
-        icon: { Image(uiImage: image) }
-      )
-    } else if let icon = icon {
-      Label(
-        title: {
-          Text(text)
-          if let subtitle = subtitle {
-            Text(subtitle)
-          }
-        },
-        icon: { Image(systemName: icon.name) }
-      )
-    } else {
-      Text(text)
-      if let subtitle = subtitle {
-        Text(subtitle)
-      }
-    }
-  }
-}
-
-struct ToggleView: View {
-  @ObservedObject var checkboxItem: MenuCheckboxItem
-  var body: some View {
-    Toggle(checkboxItem.text, isOn: $checkboxItem.checked)
-      .onChange(of: checkboxItem.checked) { newValue in
-        checkboxItem.onValueChange(["value": newValue])
-      }
-  }
-}
 
 struct ContextMenuView: ExpoSwiftUI.View {
   @EnvironmentObject var props: ContextMenuProps
@@ -230,17 +113,36 @@ struct ContextMenuView: ExpoSwiftUI.View {
 
     return MenuItemShared(text: title, subtitle: subtitle, icon: icon)
   }
+  
+  func extractMenuComponents(from children: [ExpoSwiftUI.Child]?) -> (
+    trigger: ExpoSwiftUI.Child?,
+    preview: ExpoSwiftUI.Child?,
+    accessory: ExpoSwiftUI.Child?
+  ) {
+    var trigger: ExpoSwiftUI.Child?
+    var preview: ExpoSwiftUI.Child?
+    var accessory: ExpoSwiftUI.Child?
+    
+    guard let children = children else {
+      return (trigger, preview, accessory)
+    }
+    
+    for child in children {
+      let view = child.view
+      if view is ContextMenuTriggerView {
+        trigger = child
+      } else if view is ExpoSwiftUI.HostingView<ContextMenuPreviewProps, ContextMenuPreviewView> {
+        preview = child
+      } else if view is ExpoSwiftUI.HostingView<ContextMenuAccessoryProps, ContextMenuAccessoryView> {
+        accessory = child
+      }
+    }
+    
+    return (trigger, preview, accessory)
+  }
 
   var body: some View {
-    // TODO fewer loops
-    let trigger = props.children?.first(where: { $0.view is ContextMenuTriggerView })
-    let preview = props.children?.filter {
-      $0.view is ExpoSwiftUI.HostingView<ContextMenuPreviewProps, ContextMenuPreviewView>
-    }.first
-    let accessory = props.children?.filter {
-      $0.view is ExpoSwiftUI.HostingView<ContextMenuAccessoryProps, ContextMenuAccessoryView>
-    }.first
-
+    let (trigger, preview, accessory) = extractMenuComponents(from: props.children)
     let actions = mapItemsChildren(
       children: props.children?.compactMap({ child in
         child.view
