@@ -11,9 +11,13 @@ import {
   ContextMenuItemTitle,
   ContextMenuItemSubtitle,
   ContextMenuSeparator,
+  ContextMenuCheckboxItem,
 } from "@/modules/context-menu";
+import { useState } from "react";
 
 export default function HomeScreen() {
+  const [checked, setChecked] = useState("on");
+  const [darkMode, setDarkMode] = useState("off");
   return (
     <ParallaxScrollView
       headerBackgroundColor={{ light: "#A1CEDC", dark: "#1D3D47" }}
@@ -24,6 +28,7 @@ export default function HomeScreen() {
         />
       }
     >
+      <ThemedText style={{ padding: 10 }}>is on : {checked}</ThemedText>
       <ContextMenu>
         <ContextMenuTrigger>
           <ThemedText style={{ padding: 10 }}>With Accessory</ThemedText>
@@ -44,13 +49,23 @@ export default function HomeScreen() {
 
       <ContextMenu>
         <ContextMenuTrigger>
-          <ThemedText style={{ padding: 10 }}>Basic</ThemedText>
+          <ThemedText style={{ padding: 10 }}>
+            Basic (isOn: {checked})
+          </ThemedText>
         </ContextMenuTrigger>
         <ContextMenuItem destructive={true}>
           <ContextMenuItemTitle>Basic Item 1</ContextMenuItemTitle>
           <ContextMenuItemSubtitle>Subtitle here!</ContextMenuItemSubtitle>
         </ContextMenuItem>
         <ContextMenuSeparator />
+        <ContextMenuCheckboxItem
+          value={checked}
+          text={"Checkbox Item"}
+          onValueChange={(v) => {
+            console.log("onValueChange", v);
+            setChecked(v ? `on` : `off`);
+          }}
+        />
         <ContextMenuItem>
           <ContextMenuItemTitle>Basic Item 2</ContextMenuItemTitle>
           <ContextMenuItemSubtitle>Subtitle there...</ContextMenuItemSubtitle>
@@ -66,6 +81,14 @@ export default function HomeScreen() {
           <ContextMenuItemSubtitle>Subtitle here!</ContextMenuItemSubtitle>
         </ContextMenuItem>
         <ContextMenuSeparator />
+        <ContextMenuCheckboxItem
+          value={darkMode}
+          text={"Dark Mode"}
+          onValueChange={(v) => {
+            console.log("onValueChange", v);
+            setDarkMode(v ? `on` : `off`);
+          }}
+        />
         <ContextMenuItem>
           <ContextMenuItemTitle>With Preview Item 2</ContextMenuItemTitle>
           <ContextMenuItemSubtitle>Subtitle there...</ContextMenuItemSubtitle>

@@ -86,3 +86,18 @@ public class ContextMenuSeparatorModule: Module {
     }
   }
 }
+
+public class ContextMenuCheckboxItemModule: Module {
+  public func definition() -> ModuleDefinition {
+    Name("ContextMenuCheckboxItem")
+    View(ContextMenuCheckboxItemView.self) {
+      Events("onValueChange")
+      Prop("text") { (view, text: String) in
+        view.text = text
+      }
+      Prop("value") { (view, value: String) in
+        view.value = value
+      }
+    }
+  }
+}

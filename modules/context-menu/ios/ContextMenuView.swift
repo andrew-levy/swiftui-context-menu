@@ -19,13 +19,23 @@ struct MenuItem {
   var destructive: Bool? = false
 }
 
-struct MenuCheckboxItem {
+class MenuCheckboxItem: ObservableObject {
   var text: String?
   var subtitle: String?
   var image: UIImage?
   var actionKey: String?
   var destructive: Bool? = false
-  var checked: Bool? = false
+  @Published var checked: Bool = false
+  var onValueChange: EventDispatcher
+  init(text: String? = nil, subtitle: String? = nil, image: UIImage? = nil, actionKey: String? = nil, destructive: Bool? = nil, checked: Bool = false, onValueChange: EventDispatcher) {
+    self.text = text
+    self.subtitle = subtitle
+    self.image = image
+    self.actionKey = actionKey
+    self.destructive = destructive
+    self.checked = checked
+    self.onValueChange = onValueChange
+  }
 }
 
 struct SubMenuItem {
@@ -42,6 +52,16 @@ struct MenuLabel {
 }
 
 struct MenuSeparator {
+}
+
+struct ToggleView: View {
+  @ObservedObject var checkboxItem: MenuCheckboxItem
+  var body: some View {
+    Toggle(checkboxItem.text ?? "", isOn: $checkboxItem.checked)
+      .onChange(of: checkboxItem.checked) { newValue in
+        checkboxItem.onValueChange(["value": newValue])
+      }
+  }
 }
 
 struct ContextMenuContent: View {
@@ -74,7 +94,7 @@ struct ContextMenuContent: View {
       case .group:
         AnyView(EmptyView())  // TODO implement
       case .checkboxItem(let checkboxItem):
-        AnyView(EmptyView())  // TODO implement
+        ToggleView(checkboxItem: checkboxItem)
       case .label(let label):
         AnyView(EmptyView())  // TODO implement
 //          ‼️‼️‼️
@@ -107,6 +127,15 @@ struct ContextMenuView: ExpoSwiftUI.View {
         if let triggerChild = child.view is ContextMenuTriggerView ? child : nil {
           trigger = triggerChild
           return nil
+        }
+        if let checkbox = child.view as? ContextMenuCheckboxItemView {
+          print(checkbox.value)
+          return .checkboxItem(
+            MenuCheckboxItem(
+              text: checkbox.text,
+              checked: checkbox.value == "on",
+              onValueChange: checkbox.onValueChange
+            ))
         }
         if child.view is ContextMenuSeparatorView {
           return .separator
@@ -164,6 +193,17 @@ struct ContextMenuView: ExpoSwiftUI.View {
     } else {
       Children()
     }
+  }
+}
+
+
+class ContextMenuCheckboxItemView: ExpoView {
+  var value: String = "off"
+  var text: String = ""
+  var onValueChange = EventDispatcher()
+  
+  required init(appContext: AppContext? = nil) {
+    super.init(appContext: appContext)
   }
 }
 
