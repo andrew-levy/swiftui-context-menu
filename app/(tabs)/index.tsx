@@ -12,12 +12,14 @@ import {
   ContextMenuItemSubtitle,
   ContextMenuSeparator,
   ContextMenuCheckboxItem,
+  ContextMenuSub,
+  ContextMenuSubTrigger,
 } from "@/modules/context-menu";
 import { useState } from "react";
 
 export default function HomeScreen() {
   const [checked, setChecked] = useState<"on" | "off">("on");
-  const [darkMode, setDarkMode] = useState("off");
+  const [darkMode, setDarkMode] = useState<"on" | "off">("off");
   return (
     <ParallaxScrollView
       headerBackgroundColor={{ light: "#A1CEDC", dark: "#1D3D47" }}
@@ -78,23 +80,6 @@ export default function HomeScreen() {
         <ContextMenuTrigger>
           <ThemedText style={{ padding: 10 }}>With Preview</ThemedText>
         </ContextMenuTrigger>
-        <ContextMenuItem>
-          <ContextMenuItemTitle>With Preview Item 1</ContextMenuItemTitle>
-          <ContextMenuItemSubtitle>Subtitle here!</ContextMenuItemSubtitle>
-        </ContextMenuItem>
-        <ContextMenuSeparator />
-        <ContextMenuCheckboxItem
-          value={darkMode}
-          text={"Dark Mode"}
-          onValueChange={(v) => {
-            console.log("onValueChange", v);
-            setDarkMode(v ? `on` : `off`);
-          }}
-        />
-        <ContextMenuItem>
-          <ContextMenuItemTitle>With Preview Item 2</ContextMenuItemTitle>
-          <ContextMenuItemSubtitle>Subtitle there...</ContextMenuItemSubtitle>
-        </ContextMenuItem>
         <ContextMenuPreview
           style={{
             width: 400,
@@ -108,6 +93,76 @@ export default function HomeScreen() {
             This is the preview content
           </ThemedText>
         </ContextMenuPreview>
+        <ContextMenuItem>
+          <ContextMenuItemTitle>With Preview Item 1</ContextMenuItemTitle>
+          <ContextMenuItemSubtitle>Subtitle here!</ContextMenuItemSubtitle>
+        </ContextMenuItem>
+        <ContextMenuSeparator />
+        <ContextMenuCheckboxItem
+          value={darkMode}
+          onValueChange={(v) => {
+            console.log("onValueChange", v);
+            setDarkMode(v);
+          }}
+        >
+          <ContextMenuItemTitle>Dark Mode: {darkMode}</ContextMenuItemTitle>
+        </ContextMenuCheckboxItem>
+        <ContextMenuItem>
+          <ContextMenuItemTitle>With Preview Item 2</ContextMenuItemTitle>
+          <ContextMenuItemSubtitle>Subtitle there...</ContextMenuItemSubtitle>
+        </ContextMenuItem>
+        <ContextMenuSub>
+          <ContextMenuSubTrigger>
+            <ContextMenuItemTitle>Sub Menu</ContextMenuItemTitle>
+          </ContextMenuSubTrigger>
+
+          <ContextMenuItem>
+            <ContextMenuItemTitle>
+              Hey look i'm a sub menu item
+            </ContextMenuItemTitle>
+          </ContextMenuItem>
+        </ContextMenuSub>
+      </ContextMenu>
+
+      <ContextMenu>
+        <ContextMenuTrigger>
+          <ThemedText style={{ padding: 10 }}>
+            Complex Submenu Example
+          </ThemedText>
+        </ContextMenuTrigger>
+
+        <ContextMenuItem onSelect={() => console.log("main item")}>
+          <ContextMenuItemTitle>Main Menu Item</ContextMenuItemTitle>
+          <ContextMenuItemSubtitle>With a subtitle</ContextMenuItemSubtitle>
+        </ContextMenuItem>
+
+        <ContextMenuSeparator />
+
+        <ContextMenuSub>
+          <ContextMenuSubTrigger>
+            <ContextMenuItemTitle>Advanced Options</ContextMenuItemTitle>
+            <ContextMenuItemSubtitle>Click for more...</ContextMenuItemSubtitle>
+          </ContextMenuSubTrigger>
+
+          <ContextMenuItem onSelect={() => console.log("sub item 1")}>
+            <ContextMenuItemTitle>Submenu Item 1</ContextMenuItemTitle>
+          </ContextMenuItem>
+
+          <ContextMenuCheckboxItem
+            value={checked}
+            onValueChange={(v) => {
+              console.log("submenu checkbox changed:", v);
+              setChecked(v);
+            }}
+          >
+            <ContextMenuItemTitle>Submenu Checkbox</ContextMenuItemTitle>
+            <ContextMenuItemSubtitle>Uses main state</ContextMenuItemSubtitle>
+          </ContextMenuCheckboxItem>
+
+          <ContextMenuItem destructive onSelect={() => console.log("delete")}>
+            <ContextMenuItemTitle>Delete Something</ContextMenuItemTitle>
+          </ContextMenuItem>
+        </ContextMenuSub>
       </ContextMenu>
     </ParallaxScrollView>
   );

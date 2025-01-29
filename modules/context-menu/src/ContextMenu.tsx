@@ -10,6 +10,8 @@ const ContextMenuSeparator = requireNativeView("ContextMenuSeparator");
 const _ContextMenuCheckboxItem = requireNativeView("ContextMenuCheckboxItem");
 const _ContextMenuItemTitle = requireNativeView("ContextMenuItemTitle");
 const _ContextMenuItemSubtitle = requireNativeView("ContextMenuItemSubtitle");
+const ContextMenuSub = requireNativeView("ContextMenuSub");
+const ContextMenuSubTrigger = requireNativeView("ContextMenuSubTrigger");
 
 function ContextMenuCheckboxItem(props: {
   value: "on" | "off" | "mixed" | boolean;
@@ -26,7 +28,7 @@ function ContextMenuCheckboxItem(props: {
             : "off"
           : props.value
       }
-      onValueChange={(e: NativeSyntheticEvent<{ value: string }>) => {
+      onValueChange={(e: NativeSyntheticEvent<{ value: "on" | "off" }>) => {
         props.onValueChange(e.nativeEvent.value);
       }}
       textValue={props.textValue}
@@ -64,4 +66,6 @@ export {
   ContextMenuCheckboxItem,
   ContextMenuItemTitle,
   ContextMenuItemSubtitle,
+  ContextMenuSub,
+  ContextMenuSubTrigger,
 };

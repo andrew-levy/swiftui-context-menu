@@ -20,8 +20,8 @@ public class ContextMenuItemModule: Module {
     Name("ContextMenuItem")
       View(ContextMenuItemView.self) {
           Events("onSelect")
-          Prop("textContent") { (view, textContent: String) in
-              view.textContent = textContent
+          Prop("textValue") { (view, textValue: String) in
+              view.textValue = textValue
           }
           Prop("destructive") { (view, destructive: Bool) in
               view.destructive = destructive
@@ -93,8 +93,8 @@ public class ContextMenuCheckboxItemModule: Module {
         Name("ContextMenuCheckboxItem")
         View(ContextMenuCheckboxItemView.self) {
             Events("onValueChange")
-            Prop("textContent") { (view, textContent: String) in
-                view.textContent = textContent
+            Prop("textValue") { (view, textValue: String) in
+                view.textValue = textValue
             }
             Prop("value") { (view, value: String) in
                 view.value = value
@@ -105,3 +105,28 @@ public class ContextMenuCheckboxItemModule: Module {
         }
   }
 }
+
+public class ContextMenuSubModule: Module {
+  public func definition() -> ModuleDefinition {
+    Name("ContextMenuSub")
+      View(ContextMenuSubView.self) {
+          Prop("textValue") { (view, textValue: String) in
+              view.textValue = textValue
+          }
+          Prop("destructive") { (view, destructive: Bool?) in
+              view.destructive = destructive
+          }
+          
+      }
+  }
+}
+
+public class ContextMenuSubTriggerModule: Module {
+  public func definition() -> ModuleDefinition {
+    Name("ContextMenuSubTrigger")
+    View(ContextMenuSubTriggerView.self) {
+      Events("onSelect")
+    }
+  }
+}
+

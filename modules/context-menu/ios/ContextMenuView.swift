@@ -105,59 +105,60 @@ struct ContextMenuView: ExpoSwiftUI.View {
         case .label(let label):
           AnyView(EmptyView())  // TODO implement
         case .submenu(let submenu):
-//          AnyView(EmptyView())
-        // TODO why doesn't this work?
-                    Menu(submenu.text, content: {
-                        AnyView(renderItems(actions: submenu.children))
+            Menu(submenu.text, content: {
+                        Button("Test here") {}
+                        // TODO why doesn't this work?
+//                        renderItems(actions: submenu.children)
                     }, primaryAction: {})
         }
       })
   }
 
-  func mapItemsChildren(children: [ExpoSwiftUI.Child]) -> [MenuElement] {
-    return (props.children ?? []).compactMap { child in
-      if let checkboxView = child.view as? ContextMenuCheckboxItemView {
+  func mapItemsChildren(children: [UIView]) -> [MenuElement] {
+    return (children).compactMap { child in
+      if let checkboxView = child as? ContextMenuCheckboxItemView {
         guard let item = getItemFromChildren(view: checkboxView) else { return nil }
         return .checkboxItem(
           MenuCheckboxItem(
-            text: checkboxView.textContent ?? item.text,
+            text: checkboxView.textValue ?? item.text,
             subtitle: item.subtitle,
             destructive: checkboxView.destructive,
             checked: checkboxView.value == "on",
             onValueChange: checkboxView.onValueChange
           ))
       }
-      if child.view is ContextMenuSeparatorView {
+      if child is ContextMenuSeparatorView {
         return .separator
       }
-      if let label = child.view as? ContextMenuLabelView {
+      if let label = child as? ContextMenuLabelView {
         return .label(MenuLabel(text: label.text))
       }
-      if let itemView = child.view as? ContextMenuItemView {
+      if let itemView = child as? ContextMenuItemView {
         guard let item = getItemFromChildren(view: itemView) else { return nil }
         return .item(
           MenuItem(
-            text: itemView.textContent ?? item.text, subtitle: item.subtitle, image: item.image,
+            text: itemView.textValue ?? item.text, subtitle: item.subtitle, image: item.image,
             destructive: itemView.destructive,
             onSelect: itemView.onSelect))
       }
-      if let subView = child.view as? ContextMenuSubView {
-        guard
-          let subTrigger = child.view.subviews.first(where: { $0 is ContextMenuSubTriggerView }),
-          let item = getItemFromChildren(view: subTrigger)
-        else {
-          return nil
-        }
-        // TODO how can we get the swiftui children (aka [ExpoSwiftUI.Child]) of ContextMenuSubView?
-        // do we just need .getProps()?
-        // let children = mapItemsChildren(children: subView.subviews)
+      if let subView = child as? ContextMenuSubView {
+          print("submenu...")
+          let subTrigger = subView.subviews.first(where: { $0 is ContextMenuSubTriggerView })
+          print("has subtrigger \(String(describing: subTrigger))")
+          guard
+              let subTrigger = subTrigger,
+              let item = getItemFromChildren(view: subTrigger)
+          else {
+              return nil
+          }
+//          let actualSubmenuChildren = subView.subviews
+            let subchildren = mapItemsChildren(children: [])
+          print("submenu has everything...")
           
-        return .submenu(
-          SubMenuItem(
-            text: item.text, subtitle: item.subtitle,
-            image: item.image, destructive: subView.destructive, children: []
-          ))
-
+          return .submenu(
+              SubMenuItem(
+                text: item.text, children: subchildren
+              ))
       }
       return nil
     }
@@ -191,7 +192,9 @@ struct ContextMenuView: ExpoSwiftUI.View {
         $0.view is ExpoSwiftUI.HostingView<ContextMenuAccessoryProps, ContextMenuAccessoryView>
       }.first
 
-      let actions = mapItemsChildren(children: props.children ?? [])
+        let actions = mapItemsChildren(children: props.children?.compactMap({ child in
+            child.view
+        }) ?? [])
 
       if let trigger {
         //        if let accessory {
@@ -251,7 +254,7 @@ class ContextMenuSeparatorView: ExpoView {
 
 // ITEM
 class ContextMenuItemView: ExpoView {
-  var textContent: String?
+  var textValue: String?
   var destructive: Bool? = false
   var onSelect = EventDispatcher()
   required init(appContext: AppContext? = nil) {
@@ -260,9 +263,19 @@ class ContextMenuItemView: ExpoView {
 }
 
 // SUB
-class ContextMenuSubView: ContextMenuItemView {
-
+class ContextMenuSubViewProps: ExpoSwiftUI.ViewProps {
+    var textValue: String?
+    var destructive: Bool? = false
 }
+
+class ContextMenuSubView: ExpoView {
+    var textValue: String?
+    var destructive: Bool? = false
+    required init(appContext: AppContext? = nil) {
+      super.init(appContext: appContext)
+    }
+}
+
 
 // SUBTRIGGER
 class ContextMenuSubTriggerView: ExpoView {
