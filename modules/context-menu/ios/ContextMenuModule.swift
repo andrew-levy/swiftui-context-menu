@@ -67,3 +67,11 @@ public class ContextMenuItemSubtitleModule: Module {
   }
 }
 
+public class ContextMenuSeparatorModule: Module {
+  public func definition() -> ModuleDefinition {
+    Name("ContextMenuSeparator")
+    View(ContextMenuSeparatorView.self) {
+      
+    }
+  }
+}
