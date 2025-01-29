@@ -130,3 +130,14 @@ public class ContextMenuSubTriggerModule: Module {
   }
 }
 
+
+public class ContextMenuItemIconModule: Module {
+  public func definition() -> ModuleDefinition {
+    Name("ContextMenuItemIcon")
+    View(ContextMenuItemIconView.self) {
+      Prop("name") { (view, name: String) in
+        view.name = name
+      }
+    }
+  }
+}
