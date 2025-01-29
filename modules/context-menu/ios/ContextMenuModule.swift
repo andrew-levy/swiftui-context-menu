@@ -19,8 +19,9 @@ public class ContextMenuItemModule: Module {
   public func definition() -> ModuleDefinition {
     Name("ContextMenuItem")
       View(ContextMenuItemView.self) {
-          Prop("text") { (view, text: String) in
-              view.title = text
+          Events("onSelect")
+          Prop("textContent") { (view, textContent: String) in
+              view.textContent = textContent
           }
           Prop("destructive") { (view, destructive: Bool) in
               view.destructive = destructive
@@ -89,15 +90,18 @@ public class ContextMenuSeparatorModule: Module {
 
 public class ContextMenuCheckboxItemModule: Module {
   public func definition() -> ModuleDefinition {
-    Name("ContextMenuCheckboxItem")
-    View(ContextMenuCheckboxItemView.self) {
-      Events("onValueChange")
-      Prop("text") { (view, text: String) in
-        view.text = text
-      }
-      Prop("value") { (view, value: String) in
-        view.value = value
-      }
-    }
+        Name("ContextMenuCheckboxItem")
+        View(ContextMenuCheckboxItemView.self) {
+            Events("onValueChange")
+            Prop("textContent") { (view, textContent: String) in
+                view.textContent = textContent
+            }
+            Prop("value") { (view, value: String) in
+                view.value = value
+            }
+            Prop("destructive") { (view, destructive: Bool?) in
+                view.destructive = destructive
+            }
+        }
   }
 }

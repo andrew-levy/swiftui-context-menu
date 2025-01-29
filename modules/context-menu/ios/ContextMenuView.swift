@@ -8,30 +8,39 @@ enum MenuElement {
   case label(MenuLabel)
   case group
   case checkboxItem(MenuCheckboxItem)
-//  case submenu(SubMenuItem)
+  //  case submenu(SubMenuItem)
+}
+
+struct MenuItemShared {
+  var text: String = ""
+  var subtitle: String?
+  var image: UIImage?
+  var destructive: Bool? = false
+
 }
 
 struct MenuItem {
-  var text: String?
+  var text: String = ""
   var subtitle: String?
   var image: UIImage?
-  var actionKey: String?
   var destructive: Bool? = false
+  var onSelect: EventDispatcher
 }
 
 class MenuCheckboxItem: ObservableObject {
-  var text: String?
+  var text: String
   var subtitle: String?
   var image: UIImage?
-  var actionKey: String?
   var destructive: Bool? = false
   @Published var checked: Bool = false
   var onValueChange: EventDispatcher
-  init(text: String? = nil, subtitle: String? = nil, image: UIImage? = nil, actionKey: String? = nil, destructive: Bool? = nil, checked: Bool = false, onValueChange: EventDispatcher) {
+  init(
+    text: String, subtitle: String? = nil, image: UIImage? = nil, destructive: Bool? = nil,
+    checked: Bool = false, onValueChange: EventDispatcher
+  ) {
     self.text = text
     self.subtitle = subtitle
     self.image = image
-    self.actionKey = actionKey
     self.destructive = destructive
     self.checked = checked
     self.onValueChange = onValueChange
@@ -39,12 +48,11 @@ class MenuCheckboxItem: ObservableObject {
 }
 
 struct SubMenuItem {
-    var text: String?
-    var subtitle: String?
-    var image: UIImage?
-    var actionKey: String?
-    var destructive: Bool? = false
-    var children: [MenuElement]
+  var text: String?
+  var subtitle: String?
+  var image: UIImage?
+  var destructive: Bool? = false
+  var children: [MenuElement]
 }
 
 struct MenuLabel {
@@ -57,7 +65,7 @@ struct MenuSeparator {
 struct ToggleView: View {
   @ObservedObject var checkboxItem: MenuCheckboxItem
   var body: some View {
-    Toggle(checkboxItem.text ?? "", isOn: $checkboxItem.checked)
+    Toggle(checkboxItem.text, isOn: $checkboxItem.checked)
       .onChange(of: checkboxItem.checked) { newValue in
         checkboxItem.onValueChange(["value": newValue])
       }
@@ -77,7 +85,7 @@ struct ContextMenuContent: View {
           if let image = menuItem.image {
             Label(
               title: {
-                Text(menuItem.text ?? "")
+                Text(menuItem.text)
                 if let subtitle = menuItem.subtitle {
                   Text(subtitle)
                 }
@@ -85,7 +93,7 @@ struct ContextMenuContent: View {
               icon: { Image(uiImage: image) }
             )
           } else {
-            Text(menuItem.text ?? "")
+            Text(menuItem.text)
             if let subtitle = menuItem.subtitle {
               Text(subtitle)
             }
@@ -97,12 +105,12 @@ struct ContextMenuContent: View {
         ToggleView(checkboxItem: checkboxItem)
       case .label(let label):
         AnyView(EmptyView())  // TODO implement
-//          ‼️‼️‼️
-//          swiftui can't recursively render, will need to do something special for submenu.
-//          rather than ContextMenuContent existing, we should just do:
-//          renderItems(items) and call that recursively
-//      case .submenu(let submenu):
-//          ContextMenuContent(submenu.children)
+      //          ‼️‼️‼️
+      //          swiftui can't recursively render, will need to do something special for submenu.
+      //          rather than ContextMenuContent existing, we should just do:
+      //          renderItems(items) and call that recursively
+      //      case .submenu(let submenu):
+      //          ContextMenuContent(submenu.children)
       }
     }
   }
@@ -110,6 +118,22 @@ struct ContextMenuContent: View {
 
 struct ContextMenuView: ExpoSwiftUI.View {
   @EnvironmentObject var props: ContextMenuProps
+
+  func getItemFromChildren(view: ContextMenuItemView) -> MenuItemShared? {
+    var title: String?
+    var subtitle: String?
+    for subview in view.subviews {
+      if let titleView = subview as? ContextMenuItemTitleView {
+        title = titleView.text
+      } else if let subtitleView = subview as? ContextMenuItemSubtitleView {
+        subtitle = subtitleView.text
+      }
+    }
+    title = view.textContent ?? title  // textContent can override the title node child
+    guard let title: String = title else { return nil }
+
+    return MenuItemShared(text: title, subtitle: subtitle, destructive: view.destructive)
+  }
 
   var body: some View {
 
@@ -128,13 +152,15 @@ struct ContextMenuView: ExpoSwiftUI.View {
           trigger = triggerChild
           return nil
         }
-        if let checkbox = child.view as? ContextMenuCheckboxItemView {
-          print(checkbox.value)
+        if let checkboxView = child.view as? ContextMenuCheckboxItemView {
+          guard let item = getItemFromChildren(view: checkboxView) else { return nil }
           return .checkboxItem(
             MenuCheckboxItem(
-              text: checkbox.text,
-              checked: checkbox.value == "on",
-              onValueChange: checkbox.onValueChange
+              text: item.text,
+              subtitle: item.subtitle,
+              destructive: item.destructive,
+              checked: checkboxView.value == "on",
+              onValueChange: checkboxView.onValueChange
             ))
         }
         if child.view is ContextMenuSeparatorView {
@@ -144,17 +170,11 @@ struct ContextMenuView: ExpoSwiftUI.View {
           return .label(MenuLabel(text: label.text))
         }
         if let itemView = child.view as? ContextMenuItemView {
-          var title: String?
-          var subtitle: String?
-          for subview in itemView.subviews {
-            if let titleView = subview as? ContextMenuItemTitleView {
-              title = titleView.text
-            } else if let subtitleView = subview as? ContextMenuItemSubtitleView {
-              subtitle = subtitleView.text
-            }
-          }
-          guard let title = title else { return nil }
-          return .item(MenuItem(text: title, subtitle: subtitle, destructive: itemView.destructive))
+          guard let item = getItemFromChildren(view: itemView) else { return nil }
+          return .item(
+            MenuItem(
+              text: item.text, subtitle: item.subtitle, destructive: item.destructive,
+              onSelect: itemView.onSelect))
         }
         return nil
       }
@@ -196,12 +216,10 @@ struct ContextMenuView: ExpoSwiftUI.View {
   }
 }
 
-
-class ContextMenuCheckboxItemView: ExpoView {
+class ContextMenuCheckboxItemView: ContextMenuItemView {
   var value: String = "off"
-  var text: String = ""
   var onValueChange = EventDispatcher()
-  
+
   required init(appContext: AppContext? = nil) {
     super.init(appContext: appContext)
   }
@@ -218,10 +236,10 @@ class ContextMenuProps: ExpoSwiftUI.ViewProps {
 }
 
 class ContextMenuItemView: ExpoView {
-  var title: String = ""
+  var textContent: String?
   var image: UIImage?
-  var actionKey: String?
   var destructive: Bool? = false
+  var onSelect = EventDispatcher()
   required init(appContext: AppContext? = nil) {
     super.init(appContext: appContext)
   }
