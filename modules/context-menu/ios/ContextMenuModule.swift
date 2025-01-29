@@ -19,8 +19,9 @@ public class ContextMenuItemModule: Module {
   public func definition() -> ModuleDefinition {
     Name("ContextMenuItem")
       View(ContextMenuItemView.self) {
-          Prop("text") { (view, text: String) in
-              view.title = text
+          Events("onSelect")
+          Prop("textValue") { (view, textValue: String) in
+              view.textValue = textValue
           }
           Prop("destructive") { (view, destructive: Bool) in
               view.destructive = destructive
@@ -67,3 +68,76 @@ public class ContextMenuItemSubtitleModule: Module {
   }
 }
 
+public class ContextMenuLabelModule: Module {
+  public func definition() -> ModuleDefinition {
+    Name("ContextMenuLabel")
+    View(ContextMenuLabelView.self) {
+      Prop("text") { (view, text: String) in
+        view.text = text
+      }
+    }
+  }
+}
+
+public class ContextMenuSeparatorModule: Module {
+  public func definition() -> ModuleDefinition {
+    Name("ContextMenuSeparator")
+    View(ContextMenuSeparatorView.self) {
+      
+    }
+  }
+}
+
+public class ContextMenuCheckboxItemModule: Module {
+  public func definition() -> ModuleDefinition {
+        Name("ContextMenuCheckboxItem")
+        View(ContextMenuCheckboxItemView.self) {
+            Events("onValueChange")
+            Prop("textValue") { (view, textValue: String) in
+                view.textValue = textValue
+            }
+            Prop("value") { (view, value: String) in
+                view.value = value
+            }
+            Prop("destructive") { (view, destructive: Bool?) in
+                view.destructive = destructive
+            }
+        }
+  }
+}
+
+public class ContextMenuSubModule: Module {
+  public func definition() -> ModuleDefinition {
+    Name("ContextMenuSub")
+      View(ContextMenuSubView.self) {
+          Prop("textValue") { (view, textValue: String) in
+              view.textValue = textValue
+          }
+          Prop("destructive") { (view, destructive: Bool?) in
+              view.destructive = destructive
+          }
+          
+      }
+  }
+}
+
+public class ContextMenuSubTriggerModule: Module {
+  public func definition() -> ModuleDefinition {
+    Name("ContextMenuSubTrigger")
+    View(ContextMenuSubTriggerView.self) {
+      Events("onSelect")
+    }
+  }
+}
+
+
+public class ContextMenuItemIconModule: Module {
+  public func definition() -> ModuleDefinition {
+    Name("ContextMenuItemIcon")
+    View(ContextMenuItemIconView.self) {
+      Prop("name") { (view, name: String) in
+        view.name = name
+      }
+    }
+  }
+}

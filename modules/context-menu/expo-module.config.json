@@ -8,7 +8,12 @@
       "ContextMenuPreviewModule",
       "ContextMenuAccessoryModule",
       "ContextMenuItemTitleModule",
-      "ContextMenuItemSubtitleModule"
+      "ContextMenuItemSubtitleModule",
+      "ContextMenuSeparatorModule",
+      "ContextMenuCheckboxItemModule",
+      "ContextMenuSubModule",
+      "ContextMenuSubTriggerModule",
+      "ContextMenuItemIconModule"
     ]
   },
   "android": {

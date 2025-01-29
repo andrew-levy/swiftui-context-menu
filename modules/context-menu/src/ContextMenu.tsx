@@ -1,12 +1,43 @@
 import { requireNativeView } from "expo";
+import { NativeSyntheticEvent } from "react-native";
 
 const ContextMenuTrigger = requireNativeView("ContextMenuTrigger");
 const ContextMenu = requireNativeView("ContextMenu");
 const ContextMenuPreview = requireNativeView("ContextMenuPreview");
 const ContextMenuItem = requireNativeView("ContextMenuItem");
 const ContextMenuAccessory = requireNativeView("ContextMenuAccessory");
+const ContextMenuSeparator = requireNativeView("ContextMenuSeparator");
+const ContextMenuItemIcon = requireNativeView("ContextMenuItemIcon");
+const _ContextMenuCheckboxItem = requireNativeView("ContextMenuCheckboxItem");
 const _ContextMenuItemTitle = requireNativeView("ContextMenuItemTitle");
 const _ContextMenuItemSubtitle = requireNativeView("ContextMenuItemSubtitle");
+const ContextMenuSub = requireNativeView("ContextMenuSub");
+const ContextMenuSubTrigger = requireNativeView("ContextMenuSubTrigger");
+
+function ContextMenuCheckboxItem(props: {
+  value: "on" | "off" | "mixed" | boolean;
+  textValue?: string;
+  onValueChange: (value: "on" | "off") => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <_ContextMenuCheckboxItem
+      value={
+        typeof props.value === "boolean"
+          ? props.value
+            ? "on"
+            : "off"
+          : props.value
+      }
+      onValueChange={(e: NativeSyntheticEvent<{ value: "on" | "off" }>) => {
+        props.onValueChange(e.nativeEvent.value);
+      }}
+      textValue={props.textValue}
+    >
+      {props.children}
+    </_ContextMenuCheckboxItem>
+  );
+}
 
 function ContextMenuItemTitle(props: { children: string | React.ReactNode }) {
   return (
@@ -32,6 +63,11 @@ export {
   ContextMenuPreview,
   ContextMenuItem,
   ContextMenuAccessory,
+  ContextMenuSeparator,
+  ContextMenuItemIcon,
+  ContextMenuCheckboxItem,
   ContextMenuItemTitle,
   ContextMenuItemSubtitle,
+  ContextMenuSub,
+  ContextMenuSubTrigger,
 };

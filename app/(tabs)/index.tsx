@@ -1,6 +1,9 @@
-import { Image, StyleSheet } from "react-native";
-import ParallaxScrollView from "@/components/ParallaxScrollView";
-import { ThemedText } from "@/components/ThemedText";
+import {
+  Image,
+  StyleSheet,
+  ScrollView as ParallaxScrollView,
+  Text as ThemedText,
+} from "react-native";
 import Reactions from "@/components/Reactions";
 import {
   ContextMenu,
@@ -10,19 +13,20 @@ import {
   ContextMenuPreview,
   ContextMenuItemTitle,
   ContextMenuItemSubtitle,
+  ContextMenuSeparator,
+  ContextMenuCheckboxItem,
+  ContextMenuSub,
+  ContextMenuSubTrigger,
+  ContextMenuItemIcon,
 } from "@/modules/context-menu";
+import { useState } from "react";
 
 export default function HomeScreen() {
+  const [checked, setChecked] = useState<"on" | "off">("on");
+  const [darkMode, setDarkMode] = useState<"on" | "off">("off");
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: "#A1CEDC", dark: "#1D3D47" }}
-      headerImage={
-        <Image
-          source={require("@/assets/images/partial-react-logo.png")}
-          style={styles.reactLogo}
-        />
-      }
-    >
+    <ParallaxScrollView style={{ paddingVertical: 100 }}>
+      <ThemedText style={{ padding: 10 }}>is on : {checked}</ThemedText>
       <ContextMenu>
         <ContextMenuTrigger>
           <ThemedText style={{ padding: 10 }}>With Accessory</ThemedText>
@@ -31,6 +35,7 @@ export default function HomeScreen() {
           <ContextMenuItemTitle>Hello from children</ContextMenuItemTitle>
           <ContextMenuItemSubtitle>Subtitle here!</ContextMenuItemSubtitle>
         </ContextMenuItem>
+        <ContextMenuSeparator />
         <ContextMenuItem>
           <ContextMenuItemTitle>Hello from children 2</ContextMenuItemTitle>
           <ContextMenuItemSubtitle>Subtitle there...</ContextMenuItemSubtitle>
@@ -42,13 +47,27 @@ export default function HomeScreen() {
 
       <ContextMenu>
         <ContextMenuTrigger>
-          <ThemedText style={{ padding: 10 }}>Basic</ThemedText>
+          <ThemedText style={{ padding: 10 }}>
+            Basic (isOn: {checked})
+          </ThemedText>
         </ContextMenuTrigger>
         <ContextMenuItem destructive={true}>
           <ContextMenuItemTitle>Basic Item 1</ContextMenuItemTitle>
           <ContextMenuItemSubtitle>Subtitle here!</ContextMenuItemSubtitle>
         </ContextMenuItem>
+        <ContextMenuSeparator />
+        <ContextMenuCheckboxItem
+          value={checked}
+          onValueChange={(v) => {
+            console.log("onValueChange", v);
+            setChecked(v);
+          }}
+        >
+          <ContextMenuItemTitle>Checkbox Item</ContextMenuItemTitle>
+          <ContextMenuItemSubtitle>Subtitle here!</ContextMenuItemSubtitle>
+        </ContextMenuCheckboxItem>
         <ContextMenuItem>
+          <ContextMenuItemIcon name='person.fill' />
           <ContextMenuItemTitle>Basic Item 2</ContextMenuItemTitle>
           <ContextMenuItemSubtitle>Subtitle there...</ContextMenuItemSubtitle>
         </ContextMenuItem>
@@ -58,14 +77,6 @@ export default function HomeScreen() {
         <ContextMenuTrigger>
           <ThemedText style={{ padding: 10 }}>With Preview</ThemedText>
         </ContextMenuTrigger>
-        <ContextMenuItem>
-          <ContextMenuItemTitle>With Preview Item 1</ContextMenuItemTitle>
-          <ContextMenuItemSubtitle>Subtitle here!</ContextMenuItemSubtitle>
-        </ContextMenuItem>
-        <ContextMenuItem>
-          <ContextMenuItemTitle>With Preview Item 2</ContextMenuItemTitle>
-          <ContextMenuItemSubtitle>Subtitle there...</ContextMenuItemSubtitle>
-        </ContextMenuItem>
         <ContextMenuPreview
           style={{
             width: 400,
@@ -79,6 +90,76 @@ export default function HomeScreen() {
             This is the preview content
           </ThemedText>
         </ContextMenuPreview>
+        <ContextMenuItem>
+          <ContextMenuItemTitle>With Preview Item 1</ContextMenuItemTitle>
+          <ContextMenuItemSubtitle>Subtitle here!</ContextMenuItemSubtitle>
+        </ContextMenuItem>
+        <ContextMenuSeparator />
+        <ContextMenuCheckboxItem
+          value={darkMode}
+          onValueChange={(v) => {
+            console.log("onValueChange", v);
+            setDarkMode(v);
+          }}
+        >
+          <ContextMenuItemTitle>Dark Mode: {darkMode}</ContextMenuItemTitle>
+        </ContextMenuCheckboxItem>
+        <ContextMenuItem>
+          <ContextMenuItemTitle>With Preview Item 2</ContextMenuItemTitle>
+          <ContextMenuItemSubtitle>Subtitle there...</ContextMenuItemSubtitle>
+        </ContextMenuItem>
+        <ContextMenuSub>
+          <ContextMenuSubTrigger>
+            <ContextMenuItemTitle>Sub Menu</ContextMenuItemTitle>
+          </ContextMenuSubTrigger>
+
+          <ContextMenuItem>
+            <ContextMenuItemTitle>
+              Hey look i'm a sub menu item
+            </ContextMenuItemTitle>
+          </ContextMenuItem>
+        </ContextMenuSub>
+      </ContextMenu>
+
+      <ContextMenu>
+        <ContextMenuTrigger>
+          <ThemedText style={{ padding: 10 }}>
+            Complex Submenu Example
+          </ThemedText>
+        </ContextMenuTrigger>
+
+        <ContextMenuItem onSelect={() => console.log("main item")}>
+          <ContextMenuItemTitle>Main Menu Item</ContextMenuItemTitle>
+          <ContextMenuItemSubtitle>With a subtitle</ContextMenuItemSubtitle>
+        </ContextMenuItem>
+
+        <ContextMenuSeparator />
+
+        <ContextMenuSub>
+          <ContextMenuSubTrigger>
+            <ContextMenuItemTitle>Advanced Options</ContextMenuItemTitle>
+            <ContextMenuItemSubtitle>Click for more...</ContextMenuItemSubtitle>
+          </ContextMenuSubTrigger>
+
+          <ContextMenuItem onSelect={() => console.log("sub item 1")}>
+            <ContextMenuItemTitle>Submenu Item 1</ContextMenuItemTitle>
+          </ContextMenuItem>
+
+          <ContextMenuCheckboxItem
+            value={checked}
+            onValueChange={(v) => {
+              console.log("submenu checkbox changed:", v);
+              setChecked(v);
+            }}
+          >
+            <ContextMenuItemTitle>Submenu Checkbox</ContextMenuItemTitle>
+            <ContextMenuItemSubtitle>Uses main state</ContextMenuItemSubtitle>
+          </ContextMenuCheckboxItem>
+
+          <ContextMenuItem destructive onSelect={() => console.log("delete")}>
+            <ContextMenuItemTitle>Delete Something</ContextMenuItemTitle>
+          </ContextMenuItem>
+        </ContextMenuSub>
       </ContextMenu>
     </ParallaxScrollView>
   );
