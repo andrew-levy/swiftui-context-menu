@@ -19,6 +19,7 @@ import {
   ContextMenuSubTrigger,
   ContextMenuItemIcon,
   ContextMenuLabel,
+  ContextMenuGroup,
 } from "@/modules/context-menu";
 import { useState } from "react";
 
@@ -68,10 +69,36 @@ export default function HomeScreen() {
           <ContextMenuItemSubtitle>Subtitle here!</ContextMenuItemSubtitle>
         </ContextMenuCheckboxItem>
         <ContextMenuItem>
-          <ContextMenuItemIcon name='person.fill' />
+          <ContextMenuItemIcon name="person.fill" />
           <ContextMenuItemTitle>Basic Item 2</ContextMenuItemTitle>
           <ContextMenuItemSubtitle>Subtitle there...</ContextMenuItemSubtitle>
         </ContextMenuItem>
+      </ContextMenu>
+
+      <ContextMenu>
+        <ContextMenuTrigger>
+          <ThemedText style={{ padding: 10 }}>Groups</ThemedText>
+        </ContextMenuTrigger>
+        <ContextMenuGroup label="Group 1">
+          <ContextMenuItem>
+            <ContextMenuItemTitle>Group Item 1</ContextMenuItemTitle>
+            <ContextMenuItemSubtitle>Subtitle here!</ContextMenuItemSubtitle>
+          </ContextMenuItem>
+          <ContextMenuItem>
+            <ContextMenuItemTitle>Group Item 2</ContextMenuItemTitle>
+            <ContextMenuItemSubtitle>Subtitle there...</ContextMenuItemSubtitle>
+          </ContextMenuItem>
+        </ContextMenuGroup>
+        <ContextMenuGroup label="Group 2" horizontal>
+          <ContextMenuItem>
+            <ContextMenuItemTitle>Group Item 3</ContextMenuItemTitle>
+            <ContextMenuItemSubtitle>Subtitle here!</ContextMenuItemSubtitle>
+          </ContextMenuItem>
+          <ContextMenuItem>
+            <ContextMenuItemTitle>Group Item 4</ContextMenuItemTitle>
+            <ContextMenuItemSubtitle>Subtitle there...</ContextMenuItemSubtitle>
+          </ContextMenuItem>
+        </ContextMenuGroup>
       </ContextMenu>
 
       <ContextMenu>

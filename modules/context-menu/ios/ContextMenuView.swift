@@ -21,9 +21,15 @@ struct ContextMenuView: ExpoSwiftUI.View {
             )
           }
         case .group(let group):
-            Section(header: Text(group.label ?? "").foregroundColor(.secondary)) {
-                renderItems(actions: group.children)
+          if group.horizontal {
+            ControlGroup {
+              renderItems(actions: group.children)
             }
+          } else {
+            Section(header: Text(group.label ?? "").foregroundColor(.secondary)) {
+              renderItems(actions: group.children)
+            }
+          }
         case .checkboxItem(let checkboxItem):
           ToggleView(checkboxItem: checkboxItem)
         case .label(let label):
@@ -91,6 +97,15 @@ struct ContextMenuView: ExpoSwiftUI.View {
             onSelect: subTrigger.onSelect,
             children: mapItemsChildren(children: subView.subviews)
           ))
+      }
+      if let group = child as? ContextMenuGroupView {
+        return .group(
+          MenuGroup(
+            label: group.label, 
+            horizontal: group.horizontal,
+            children: mapItemsChildren(children: group.subviews)
+          )
+        )
       }
       return nil
     }
@@ -283,5 +298,14 @@ struct ContextMenuPreviewView: ExpoSwiftUI.View {
   @EnvironmentObject var props: ContextMenuPreviewProps
   var body: some View {
     Children()
+  }
+}
+
+// GROUP
+class ContextMenuGroupView: ExpoView {
+  var horizontal: Bool = false
+  var label: String = ""
+  required init(appContext: AppContext? = nil) {
+    super.init(appContext: appContext)
   }
 }

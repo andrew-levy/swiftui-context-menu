@@ -141,3 +141,18 @@ public class ContextMenuItemIconModule: Module {
     }
   }
 }
+
+
+public class ContextMenuGroupModule: Module {
+  public func definition() -> ModuleDefinition {
+    Name("ContextMenuGroup")
+    View(ContextMenuGroupView.self) {
+      Prop("horizontal") { (view, horizontal: Bool) in
+        view.horizontal = horizontal
+      }
+      Prop("label") { (view, label: String) in
+        view.label = label
+      }
+    }
+  }
+}
