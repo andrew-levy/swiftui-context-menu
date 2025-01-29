@@ -8,6 +8,7 @@ enum MenuElement {
   case label(MenuLabel)
   case group
   case checkboxItem(MenuCheckboxItem)
+//  case submenu(SubMenuItem)
 }
 
 struct MenuItem {
@@ -25,6 +26,15 @@ struct MenuCheckboxItem {
   var actionKey: String?
   var destructive: Bool? = false
   var checked: Bool? = false
+}
+
+struct SubMenuItem {
+    var text: String?
+    var subtitle: String?
+    var image: UIImage?
+    var actionKey: String?
+    var destructive: Bool? = false
+    var children: [MenuElement]
 }
 
 struct MenuLabel {
@@ -67,6 +77,12 @@ struct ContextMenuContent: View {
         AnyView(EmptyView())  // TODO implement
       case .label(let label):
         AnyView(EmptyView())  // TODO implement
+//          ‼️‼️‼️
+//          swiftui can't recursively render, will need to do something special for submenu.
+//          rather than ContextMenuContent existing, we should just do:
+//          renderItems(items) and call that recursively
+//      case .submenu(let submenu):
+//          ContextMenuContent(submenu.children)
       }
     }
   }
