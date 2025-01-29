@@ -222,34 +222,28 @@ struct ContextMenuView: ExpoSwiftUI.View {
         children: props.children?.compactMap({ child in
           child.view
         }) ?? [])
+      
+      AnyView(EmptyView())
 
-        if accessory != nil {
-            AnyView(EmptyView())//          ContextMenuWithAccessory(
-            //          //            trigger: {
-            //          //              trigger
-            //          //            },
-            //          //            overlay: {
-            //          //              accessory
-            //          //            }, menuItems: actions
-            //          //          )
-            //          //          .frame(height: trigger.view.frame.height)
-        } else if let trigger {
-            if #unavailable(iOS 16.0) {
-                trigger
-            } else if let preview {
-              trigger
-                .contextMenu {
-                  renderItems(actions: actions)
-                } preview: {
-                  preview
-                }
-            } else {
-              trigger
-                .contextMenu {
-                  renderItems(actions: actions)
-                }
-        }
-    }
+//        if let trigger {
+//            if #unavailable(iOS 16.0) {
+//                trigger
+//            } else if let preview {
+//              trigger
+//                .contextMenu {
+//                  renderItems(actions: actions)
+//                } preview: {
+//                  preview
+//                }
+//            } else {
+//              trigger
+//                .contextMenu {
+//                  renderItems(actions: actions)
+//                }
+//            }
+//        } else {
+//            Children()
+//        }
   }
 }
 
