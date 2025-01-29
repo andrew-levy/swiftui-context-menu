@@ -132,9 +132,10 @@ struct ContextMenuView: ExpoSwiftUI.View {
           Menu(
             submenu.text,
             content: {
-              Button("Test here") {}
-              // TODO why doesn't this work?
-              //                        renderItems(actions: submenu.children)
+                let _ = print("submenu rendering: \(submenu.children)")
+//              Button("Test here") {}
+//               TODO why doesn't this work?
+                                      renderItems(actions: submenu.children)
             }, primaryAction: {})
         }
       })
@@ -177,8 +178,8 @@ struct ContextMenuView: ExpoSwiftUI.View {
         else {
           return nil
         }
-        //          let actualSubmenuChildren = subView.subviews
-        let subchildren = mapItemsChildren(children: [])
+        let actualSubmenuChildren = subView.subviews
+        let subchildren = mapItemsChildren(children: actualSubmenuChildren)
         print("submenu has everything...")
 
         return .submenu(
