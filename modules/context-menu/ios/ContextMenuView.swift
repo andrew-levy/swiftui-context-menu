@@ -46,7 +46,7 @@ class MenuCheckboxItem: ObservableObject {
 }
 
 struct SubMenuItem {
-  var text: String?
+  var text: String
   var subtitle: String?
   var image: UIImage?
   var destructive: Bool? = false
@@ -105,11 +105,11 @@ struct ContextMenuView: ExpoSwiftUI.View {
         case .label(let label):
           AnyView(EmptyView())  // TODO implement
         case .submenu(let submenu):
-          AnyView(EmptyView())
+//          AnyView(EmptyView())
         // TODO why doesn't this work?
-        //            Menu(submenu.text, content: {
-        //                AnyView(renderItems(actions: submenu.children))
-        //            }, primaryAction: {})
+                    Menu(submenu.text, content: {
+                        AnyView(renderItems(actions: submenu.children))
+                    }, primaryAction: {})
         }
       })
   }
