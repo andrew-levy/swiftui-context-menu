@@ -69,7 +69,7 @@ export default function HomeScreen() {
           <ContextMenuItemSubtitle>Subtitle here!</ContextMenuItemSubtitle>
         </ContextMenuCheckboxItem>
         <ContextMenuItem>
-          <ContextMenuItemIcon name="person.fill" />
+          <ContextMenuItemIcon name='person.fill' />
           <ContextMenuItemTitle>Basic Item 2</ContextMenuItemTitle>
           <ContextMenuItemSubtitle>Subtitle there...</ContextMenuItemSubtitle>
         </ContextMenuItem>
@@ -79,7 +79,7 @@ export default function HomeScreen() {
         <ContextMenuTrigger>
           <ThemedText style={{ padding: 10 }}>Groups</ThemedText>
         </ContextMenuTrigger>
-        <ContextMenuGroup label="Group 1">
+        <ContextMenuGroup label='Group 1'>
           <ContextMenuItem>
             <ContextMenuItemTitle>Group Item 1</ContextMenuItemTitle>
             <ContextMenuItemSubtitle>Subtitle here!</ContextMenuItemSubtitle>
@@ -89,7 +89,7 @@ export default function HomeScreen() {
             <ContextMenuItemSubtitle>Subtitle there...</ContextMenuItemSubtitle>
           </ContextMenuItem>
         </ContextMenuGroup>
-        <ContextMenuGroup label="Group 2" horizontal>
+        <ContextMenuGroup label='Group 2' horizontal>
           <ContextMenuItem>
             <ContextMenuItemTitle>Group Item 3</ContextMenuItemTitle>
             <ContextMenuItemSubtitle>Subtitle here!</ContextMenuItemSubtitle>
@@ -99,6 +99,59 @@ export default function HomeScreen() {
             <ContextMenuItemSubtitle>Subtitle there...</ContextMenuItemSubtitle>
           </ContextMenuItem>
         </ContextMenuGroup>
+      </ContextMenu>
+
+      <ContextMenu>
+        <ContextMenuTrigger>
+          <ThemedText style={{ padding: 10 }}>
+            Complex Submenu Example
+          </ThemedText>
+        </ContextMenuTrigger>
+
+        <ContextMenuLabel>Label here!</ContextMenuLabel>
+
+        <ContextMenuItem onSelect={() => console.log("main item")}>
+          <ContextMenuItemTitle>Main Menu Item</ContextMenuItemTitle>
+          <ContextMenuItemSubtitle>With a subtitle</ContextMenuItemSubtitle>
+        </ContextMenuItem>
+
+        <ContextMenuSeparator />
+
+        <ContextMenuSub>
+          <ContextMenuSubTrigger onSelect={() => console.log("hi")}>
+            <ContextMenuItemTitle>Advanced Options</ContextMenuItemTitle>
+            <ContextMenuItemSubtitle>Click for more...</ContextMenuItemSubtitle>
+          </ContextMenuSubTrigger>
+
+          <ContextMenuItem onSelect={() => console.log("sub item 1")}>
+            <ContextMenuItemTitle>Submenu Item 1</ContextMenuItemTitle>
+          </ContextMenuItem>
+
+          <ContextMenuCheckboxItem
+            value={checked}
+            onValueChange={(v) => {
+              console.log("submenu checkbox changed:", v);
+              setChecked(v);
+            }}
+          >
+            <ContextMenuItemTitle>Submenu Checkbox</ContextMenuItemTitle>
+            <ContextMenuItemSubtitle>Uses main state</ContextMenuItemSubtitle>
+          </ContextMenuCheckboxItem>
+
+          <ContextMenuItem destructive onSelect={() => console.log("delete")}>
+            <ContextMenuItemTitle>Delete Something</ContextMenuItemTitle>
+          </ContextMenuItem>
+        </ContextMenuSub>
+      </ContextMenu>
+
+      <ContextMenu isDropdown>
+        <ContextMenuTrigger>
+          <ThemedText style={{ padding: 10 }}>Dropdown Menu</ThemedText>
+        </ContextMenuTrigger>
+
+        <ContextMenuItem>
+          <ContextMenuItemTitle>Dropdown Menu</ContextMenuItemTitle>
+        </ContextMenuItem>
       </ContextMenu>
 
       <ContextMenu>
@@ -145,49 +198,6 @@ export default function HomeScreen() {
             <ContextMenuItemTitle>
               Hey look i'm a sub menu item
             </ContextMenuItemTitle>
-          </ContextMenuItem>
-        </ContextMenuSub>
-      </ContextMenu>
-
-      <ContextMenu>
-        <ContextMenuTrigger>
-          <ThemedText style={{ padding: 10 }}>
-            Complex Submenu Example
-          </ThemedText>
-        </ContextMenuTrigger>
-
-        <ContextMenuLabel>Label here!</ContextMenuLabel>
-
-        <ContextMenuItem onSelect={() => console.log("main item")}>
-          <ContextMenuItemTitle>Main Menu Item</ContextMenuItemTitle>
-          <ContextMenuItemSubtitle>With a subtitle</ContextMenuItemSubtitle>
-        </ContextMenuItem>
-
-        <ContextMenuSeparator />
-
-        <ContextMenuSub>
-          <ContextMenuSubTrigger onSelect={() => console.log("hi")}>
-            <ContextMenuItemTitle>Advanced Options</ContextMenuItemTitle>
-            <ContextMenuItemSubtitle>Click for more...</ContextMenuItemSubtitle>
-          </ContextMenuSubTrigger>
-
-          <ContextMenuItem onSelect={() => console.log("sub item 1")}>
-            <ContextMenuItemTitle>Submenu Item 1</ContextMenuItemTitle>
-          </ContextMenuItem>
-
-          <ContextMenuCheckboxItem
-            value={checked}
-            onValueChange={(v) => {
-              console.log("submenu checkbox changed:", v);
-              setChecked(v);
-            }}
-          >
-            <ContextMenuItemTitle>Submenu Checkbox</ContextMenuItemTitle>
-            <ContextMenuItemSubtitle>Uses main state</ContextMenuItemSubtitle>
-          </ContextMenuCheckboxItem>
-
-          <ContextMenuItem destructive onSelect={() => console.log("delete")}>
-            <ContextMenuItemTitle>Delete Something</ContextMenuItemTitle>
           </ContextMenuItem>
         </ContextMenuSub>
       </ContextMenu>

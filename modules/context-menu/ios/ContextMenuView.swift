@@ -44,7 +44,7 @@ struct ContextMenuView: ExpoSwiftUI.View {
               text: submenu.text,
               subtitle: submenu.subtitle,
               image: submenu.image,
-              icon: nil
+              icon: submenu.icon
             )
           } primaryAction: {
             if let onSelect = submenu.onSelect {
@@ -71,6 +71,25 @@ struct ContextMenuView: ExpoSwiftUI.View {
       if child is ContextMenuSeparatorView {
         return .separator
       }
+    if let subView = child as? ContextMenuSubView {
+      guard
+        let subTrigger = subView.subviews.first(where: { $0 is ContextMenuSubTriggerView }) as? ContextMenuSubTriggerView,
+        let item = getItemFromChildren(view: subTrigger)
+      else {
+        return nil
+      }
+
+      return .submenu(
+        SubMenuItem(
+          text: item.text,
+          subtitle: item.subtitle,
+          image: item.image,
+          destructive: subView.destructive,
+          onSelect: subTrigger.onSelect,
+          children: mapItemsChildren(children: subView.subviews),
+          icon: item.icon
+        ))
+    }
       if let label = child as? ContextMenuLabelView {
         return .label(MenuLabel(text: label.text))
       }
@@ -81,22 +100,6 @@ struct ContextMenuView: ExpoSwiftUI.View {
             text: itemView.textValue ?? item.text, subtitle: item.subtitle, image: item.image,
             destructive: itemView.destructive,
             onSelect: itemView.onSelect, icon: item.icon))
-      }
-      if let subView = child as? ContextMenuSubView {
-        guard
-          let subTrigger = subView.subviews.first(where: { $0 is ContextMenuSubTriggerView }) as? ContextMenuSubTriggerView,
-          let item = getItemFromChildren(view: subTrigger)
-        else {
-          return nil
-        }
-
-        return .submenu(
-          SubMenuItem(
-            text: item.text, subtitle: item.subtitle, image: item.image,
-            destructive: subView.destructive,
-            onSelect: subTrigger.onSelect,
-            children: mapItemsChildren(children: subView.subviews)
-          ))
       }
       if let group = child as? ContextMenuGroupView {
         return .group(
@@ -115,6 +118,7 @@ struct ContextMenuView: ExpoSwiftUI.View {
     var title: String?
     var subtitle: String?
     var icon: MenuItemIcon?
+    // TODO does this support nested subviews? should we go recursive / build a queue?
     for subview in view.subviews {
       if let titleView = subview as? ContextMenuItemTitleView {
         title = titleView.text
@@ -158,26 +162,46 @@ struct ContextMenuView: ExpoSwiftUI.View {
 
   var body: some View {
     let (trigger, preview, accessory) = extractMenuComponents(from: props.children)
+    
+    
     let actions = mapItemsChildren(
       children: props.children?.compactMap({ child in
         child.view
       }) ?? [])
 
     if let trigger {
-      if #unavailable(iOS 16.0) {
+      if props.isDropdown == true {
+        Menu {
+            renderItems(actions: actions)
+        } label: {
+            trigger.frame(alignment: .topLeading)
+        }
+      } else if #unavailable(iOS 16.0) {
         trigger
       } else if let preview {
         trigger
           .contextMenu {
             renderItems(actions: actions)
           } preview: {
-            preview
+              preview.ignoresSafeArea(.all)
           }
+          .onAppear(perform: {
+              props.onOpenChange(["open": true])
+          })
+          .onDisappear(perform: {
+              props.onOpenChange(["open": false])
+          })
       } else {
         trigger
           .contextMenu {
             renderItems(actions: actions)
           }
+          .onAppear(perform: {
+              props.onOpenChange(["open": true])
+          })
+          .onDisappear(perform: {
+              props.onOpenChange(["open": false])
+          })
       }
     } else {
       Children()
@@ -187,6 +211,7 @@ struct ContextMenuView: ExpoSwiftUI.View {
 
 class ContextMenuProps: ExpoSwiftUI.ViewProps {
   var onOpenChange = EventDispatcher()
+    @Field var isDropdown: Bool? = false
 }
 // ICON
 class ContextMenuItemIconView: ExpoView {

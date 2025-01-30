@@ -65,6 +65,7 @@ struct SubMenuItem {
   var destructive: Bool? = false
   var onSelect: EventDispatcher?
   var children: [MenuElement]
+  var icon: MenuItemIcon?
 }
 
 struct MenuLabel {
