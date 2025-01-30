@@ -1,9 +1,17 @@
 import { requireNativeView } from "expo";
-import { Fragment } from "react";
+import {
+  cloneElement,
+  createContext,
+  Fragment,
+  useContext,
+  useEffect,
+  useReducer,
+  useRef,
+} from "react";
 import { NativeSyntheticEvent } from "react-native";
 
 const ContextMenuTrigger = requireNativeView("ContextMenuTrigger");
-const ContextMenu = requireNativeView("ContextMenu");
+const _ContextMenu = requireNativeView("ContextMenu");
 const ContextMenuPreview = requireNativeView("ContextMenuPreview");
 const ContextMenuItem = requireNativeView("ContextMenuItem");
 const ContextMenuAccessory = requireNativeView("ContextMenuAccessory");
@@ -16,6 +24,52 @@ const ContextMenuSub = requireNativeView("ContextMenuSub");
 const ContextMenuSubTrigger = requireNativeView("ContextMenuSubTrigger");
 const _ContextMenuLabel = requireNativeView("ContextMenuLabel");
 const ContextMenuGroup = requireNativeView("ContextMenuGroup");
+
+const MenuDevContext = createContext(() => {});
+const useTriggerFastRefresh = () =>
+  __DEV__ ? null : useContext(MenuDevContext);
+
+const FastRefreshProvider = (props: { children: React.ReactElement }) => {
+  const [key, increment] = useReducer((x) => x + 1, 0);
+  return (
+    <MenuDevContext.Provider value={increment}>
+      {cloneElement(props.children, { id: key })}
+    </MenuDevContext.Provider>
+  );
+};
+
+const WrapElementForDev = <E extends React.ComponentType>(E: E) => {
+  if (__DEV__) {
+    const Component = function Component(props: React.ComponentProps<E>) {
+      const prevProps = useRef(props);
+      const menuDevContext = useTriggerFastRefresh();
+      useEffect(() => {
+        let didChange = false;
+        for (const key in props) {
+          if (props[key] !== prevProps.current[key]) {
+            didChange = true;
+            break;
+          }
+        }
+        if (didChange) {
+          menuDevContext?.();
+        }
+        prevProps.current = props;
+      }, Object.values(props));
+      return (
+        <MenuDevContext.Provider value={() => {}}>
+          <E {...(props as any)} />
+        </MenuDevContext.Provider>
+      );
+    };
+
+    Component.displayName = `Zeego.${E.displayName || E.name}`;
+
+    return Component;
+  }
+
+  return E;
+};
 
 function ContextMenuLabel(props: { children: React.ReactNode }) {
   return (
@@ -76,7 +130,19 @@ const ContextMenuSubContent = (props: { children: React.ReactNode }) => {
   return <Fragment>{props.children}</Fragment>;
 };
 
-export {
+let ContextMenu = _ContextMenu;
+
+if (__DEV__) {
+  ContextMenu = function ContextMenuForDev(props) {
+    return (
+      <FastRefreshProvider>
+        <_ContextMenu {...props} />
+      </FastRefreshProvider>
+    );
+  };
+}
+
+module.exports = {
   ContextMenuTrigger,
   ContextMenu,
   ContextMenuPreview,
