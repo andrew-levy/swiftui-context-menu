@@ -162,6 +162,8 @@ struct ContextMenuView: ExpoSwiftUI.View {
 
   var body: some View {
     let (trigger, preview, accessory) = extractMenuComponents(from: props.children)
+      
+      let _ = print("[body][render]\(String(describing: props.children?.count))")
     
     
     let actions = mapItemsChildren(

@@ -54,7 +54,7 @@ export default function HomeScreen() {
           </ThemedText>
         </ContextMenuTrigger>
         <ContextMenuItem destructive={true}>
-          <ContextMenuItemTitle>Basic Item 1</ContextMenuItemTitle>
+          <ContextMenuItemTitle>Basic Item 2</ContextMenuItemTitle>
           <ContextMenuItemSubtitle>Subtitle here!</ContextMenuItemSubtitle>
         </ContextMenuItem>
         <ContextMenuSeparator />
@@ -77,9 +77,9 @@ export default function HomeScreen() {
 
       <ContextMenu>
         <ContextMenuTrigger>
-          <ThemedText style={{ padding: 10 }}>Groups</ThemedText>
+          <ThemedText style={{ padding: 10 }}>Groups!!</ThemedText>
         </ContextMenuTrigger>
-        <ContextMenuGroup label='Group 1'>
+        <ContextMenuGroup label='Group hi!'>
           <ContextMenuItem>
             <ContextMenuItemTitle>Group Item 1</ContextMenuItemTitle>
             <ContextMenuItemSubtitle>Subtitle here!</ContextMenuItemSubtitle>
@@ -104,11 +104,11 @@ export default function HomeScreen() {
       <ContextMenu>
         <ContextMenuTrigger>
           <ThemedText style={{ padding: 10 }}>
-            Complex Submenu Example
+            Complex Submenu Example!
           </ThemedText>
         </ContextMenuTrigger>
 
-        <ContextMenuLabel>Label here!</ContextMenuLabel>
+        <ContextMenuLabel>Label here!!!</ContextMenuLabel>
 
         <ContextMenuItem onSelect={() => console.log("main item")}>
           <ContextMenuItemTitle>Main Menu Item</ContextMenuItemTitle>
@@ -150,7 +150,7 @@ export default function HomeScreen() {
         </ContextMenuTrigger>
 
         <ContextMenuItem>
-          <ContextMenuItemTitle>Dropdown Menu</ContextMenuItemTitle>
+          <ContextMenuItemTitle>!!</ContextMenuItemTitle>
         </ContextMenuItem>
       </ContextMenu>
 

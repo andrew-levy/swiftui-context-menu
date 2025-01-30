@@ -10,36 +10,9 @@ import {
 } from "react";
 import { NativeSyntheticEvent } from "react-native";
 
-const ContextMenuTrigger = requireNativeView("ContextMenuTrigger");
-const _ContextMenu = requireNativeView("ContextMenu");
-const ContextMenuPreview = requireNativeView("ContextMenuPreview");
-const ContextMenuItem = requireNativeView("ContextMenuItem");
-const ContextMenuAccessory = requireNativeView("ContextMenuAccessory");
-const ContextMenuSeparator = requireNativeView("ContextMenuSeparator");
-const ContextMenuItemIcon = requireNativeView("ContextMenuItemIcon");
-const _ContextMenuCheckboxItem = requireNativeView("ContextMenuCheckboxItem");
-const _ContextMenuItemTitle = requireNativeView("ContextMenuItemTitle");
-const _ContextMenuItemSubtitle = requireNativeView("ContextMenuItemSubtitle");
-const ContextMenuSub = requireNativeView("ContextMenuSub");
-const ContextMenuSubTrigger = requireNativeView("ContextMenuSubTrigger");
-const _ContextMenuLabel = requireNativeView("ContextMenuLabel");
-const ContextMenuGroup = requireNativeView("ContextMenuGroup");
-
-const MenuDevContext = createContext(() => {});
-const useTriggerFastRefresh = () =>
-  __DEV__ ? null : useContext(MenuDevContext);
-
-const FastRefreshProvider = (props: { children: React.ReactElement }) => {
-  const [key, increment] = useReducer((x) => x + 1, 0);
-  return (
-    <MenuDevContext.Provider value={increment}>
-      {cloneElement(props.children, { id: key })}
-    </MenuDevContext.Provider>
-  );
-};
-
 const WrapElementForDev = <E extends React.ComponentType>(E: E) => {
-  if (__DEV__) {
+  if (__DEV__ && false) {
+    // it doesn't work
     const Component = function Component(props: React.ComponentProps<E>) {
       const prevProps = useRef(props);
       const menuDevContext = useTriggerFastRefresh();
@@ -65,10 +38,60 @@ const WrapElementForDev = <E extends React.ComponentType>(E: E) => {
 
     Component.displayName = `Zeego.${E.displayName || E.name}`;
 
-    return Component;
+    return Component as E;
   }
 
   return E;
+};
+
+const ContextMenuTrigger = WrapElementForDev(
+  requireNativeView("ContextMenuTrigger")
+);
+const _ContextMenu = WrapElementForDev(requireNativeView("ContextMenu"));
+const ContextMenuPreview = WrapElementForDev(
+  requireNativeView("ContextMenuPreview")
+);
+const ContextMenuItem = WrapElementForDev(requireNativeView("ContextMenuItem"));
+const ContextMenuAccessory = WrapElementForDev(
+  requireNativeView("ContextMenuAccessory")
+);
+const ContextMenuSeparator = WrapElementForDev(
+  requireNativeView("ContextMenuSeparator")
+);
+const ContextMenuItemIcon = WrapElementForDev(
+  requireNativeView("ContextMenuItemIcon")
+);
+const _ContextMenuCheckboxItem = WrapElementForDev(
+  requireNativeView("ContextMenuCheckboxItem")
+);
+const _ContextMenuItemTitle = WrapElementForDev(
+  requireNativeView("ContextMenuItemTitle")
+);
+const _ContextMenuItemSubtitle = WrapElementForDev(
+  requireNativeView("ContextMenuItemSubtitle")
+);
+const ContextMenuSub = WrapElementForDev(requireNativeView("ContextMenuSub"));
+const ContextMenuSubTrigger = WrapElementForDev(
+  requireNativeView("ContextMenuSubTrigger")
+);
+const _ContextMenuLabel = WrapElementForDev(
+  requireNativeView("ContextMenuLabel")
+);
+const ContextMenuGroup = WrapElementForDev(
+  requireNativeView("ContextMenuGroup")
+);
+
+const MenuDevContext = createContext(() => {});
+const useTriggerFastRefresh = () =>
+  __DEV__ ? null : useContext(MenuDevContext);
+
+const FastRefreshProvider = (props: { children: React.ReactElement }) => {
+  const [key, increment] = useReducer((x) => x + 1, 0);
+  return (
+    <MenuDevContext.Provider value={increment}>
+      {cloneElement(props.children, { key })}
+    </MenuDevContext.Provider>
+  );
 };
 
 function ContextMenuLabel(props: { children: React.ReactNode }) {
@@ -142,7 +165,7 @@ if (__DEV__) {
   };
 }
 
-module.exports = {
+export {
   ContextMenuTrigger,
   ContextMenu,
   ContextMenuPreview,
