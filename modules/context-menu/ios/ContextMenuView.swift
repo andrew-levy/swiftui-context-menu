@@ -70,7 +70,7 @@ struct ContextMenuView: ExpoSwiftUI.View {
                     .onDisappear { props.onOpenChange(["open": false]) }
             }
         } else {
-            UnwrappedChildren()
+            Children()
         }
     }
 }
