@@ -8,11 +8,11 @@ struct ContextMenuView: ExpoSwiftUI.View {
     func extractMenuComponents(from children: [ExpoSwiftUI.Child]?) -> (
         trigger: ExpoSwiftUI.Child?,
         preview: ExpoSwiftUI.Child?,
-        content: ExpoSwiftUI.Child?
+        content: [ExpoSwiftUI.Child]
     ) {
         var trigger: ExpoSwiftUI.Child?
         var preview: ExpoSwiftUI.Child?
-        var content: ExpoSwiftUI.Child?
+        var content: [ExpoSwiftUI.Child] = []
         
         guard let children = children else {
             return (trigger, preview, content)
@@ -24,8 +24,8 @@ struct ContextMenuView: ExpoSwiftUI.View {
                 trigger = child
             } else if view is ExpoSwiftUI.HostingView<ContextMenuPreviewProps, ContextMenuPreviewView> {
                 preview = child
-            } else if view is ExpoSwiftUI.HostingView<ContextMenuContentProps, ContextMenuContentView> {
-                content = child
+            } else {
+                content.append(child)
             }
         }
         
@@ -34,34 +34,53 @@ struct ContextMenuView: ExpoSwiftUI.View {
     
     var body: some View {
         let (trigger, preview, content) = extractMenuComponents(from: props.children)
-        
-        let _ = print("ContextMenuView debug - Content: \(String(describing: content)), Preview: \(String(describing: preview)), Trigger: \(String(describing: trigger))")
+         
         
         if let trigger {
             if props.isDropdown == true {
                 Menu {
-                    UnwrappedChildren()
+                    props.children = content
+                    
+                    return UnwrappedChildren()
+                        .onAppear {
+                            print("Open Dropdown")
+                            props.onOpenChange(["open": true]) }
+                        .onDisappear {
+                            print("Close Dropdown")
+                            props.onOpenChange(["open": false])
+                        }
+                        
                 } label: {
-                    trigger.frame(alignment: .topLeading)
+                    trigger.frame(alignment: .topLeading).onTapGesture {
+                        print("menu tapped!")
+                    }
                 }
             } else if #unavailable(iOS 16.0) {
                 trigger
             } else if let preview {
                 trigger
                     .contextMenu {
-                        UnwrappedChildren()
+                        props.children = content
+                        
+                        return UnwrappedChildren()
+                            .onAppear { props.onOpenChange(["open": true]) }
+                            .onDisappear { props.onOpenChange(["open": false]) }
                     } preview: {
-                        preview.ignoresSafeArea(.all)
+                        let preview = preview.view as? ExpoSwiftUI.HostingView<ContextMenuPreviewProps, ContextMenuPreviewView>
+
+                        ZStack(alignment: .topLeading) {
+                            ForEach(preview?.getProps().children ?? []) { $0 }
+                        }
                     }
-                    .onAppear { props.onOpenChange(["open": true]) }
-                    .onDisappear { props.onOpenChange(["open": false]) }
             } else {
                 trigger
                     .contextMenu {
-                        UnwrappedChildren()
+                        props.children = content
+                        
+                        return UnwrappedChildren()
+                            .onAppear { props.onOpenChange(["open": true]) }
+                            .onDisappear { props.onOpenChange(["open": false]) }
                     }
-                    .onAppear { props.onOpenChange(["open": true]) }
-                    .onDisappear { props.onOpenChange(["open": false]) }
             }
         } else {
             Children()
@@ -87,14 +106,26 @@ struct ContextMenuSubContentView: ExpoSwiftUI.View {
 // MARK: - Item View (Just renders children)
 struct ContextMenuItemView: ExpoSwiftUI.View {
     @EnvironmentObject var props: ContextMenuItemProps
-
+     
     var body: some View {
-        let (icon, image) = extractComponents(from: props.children)
-        
         Button(role: props.destructive == true ? .destructive : nil, action: {
             props.onSelect([:])
         }) {
             UnwrappedChildren()
+        }
+        .modifier(MenuActionDismissBehaviorModifier(shouldDismiss: props.shouldDismissOnSelect))
+    }
+}
+
+// Separate modifier to handle the iOS version check
+struct MenuActionDismissBehaviorModifier: ViewModifier {
+    let shouldDismiss: Bool
+    
+    func body(content: Content) -> some View {
+        if #available(iOS 16.4, *) {
+            content.menuActionDismissBehavior(shouldDismiss ? .enabled : .disabled)
+        } else {
+            content
         }
     }
 }
@@ -163,10 +194,10 @@ struct ContextMenuSubView: ExpoSwiftUI.View {
     
     func extractSubComponents(from children: [ExpoSwiftUI.Child]?) -> (
         trigger: ExpoSwiftUI.Child?,
-        content: ExpoSwiftUI.Child?
+        content: [ExpoSwiftUI.Child]
     ) {
         var trigger: ExpoSwiftUI.Child?
-        var content: ExpoSwiftUI.Child?
+        var content: [ExpoSwiftUI.Child] = []
         
         guard let children = children else {
             return (trigger, content)
@@ -176,8 +207,8 @@ struct ContextMenuSubView: ExpoSwiftUI.View {
             let view = child.view
             if view is ExpoSwiftUI.HostingView<ContextMenuSubTriggerProps, ContextMenuSubTriggerView> {
                 trigger = child
-            } else if view is ExpoSwiftUI.HostingView<ContextMenuSubContentProps, ContextMenuSubContentView> {
-                content = child
+            } else {
+                content.append(child)
             }
         }
         
@@ -189,9 +220,8 @@ struct ContextMenuSubView: ExpoSwiftUI.View {
         
         if let trigger {
             Menu {
-                if let content {
-                    content
-                }
+                props.children = content
+                return UnwrappedChildren()
             } label: {
                 trigger
             }
@@ -206,16 +236,21 @@ struct ContextMenuSubTriggerView: ExpoSwiftUI.View {
     @EnvironmentObject var props: ContextMenuSubTriggerProps
     
     var body: some View {
-        UnwrappedChildren()
+        Button(role: props.destructive ? .destructive : nil, action: {
+            props.onSelect([:])
+        }, label: {
+            UnwrappedChildren()
+        })
     }
 }
 
 // MARK: - Preview View (Just renders children)
 struct ContextMenuPreviewView: ExpoSwiftUI.View {
     @EnvironmentObject var props: ContextMenuPreviewProps
+    @EnvironmentObject var shadowNodeProxy: ExpoSwiftUI.ShadowNodeProxy
     
     var body: some View {
-        UnwrappedChildren()
+        EmptyView().frame(width: 0, height: 0)
     }
 }
 
@@ -227,6 +262,7 @@ class ContextMenuProps: ExpoSwiftUI.ViewProps {
 
 class ContextMenuItemProps: ExpoSwiftUI.ViewProps {
     var onSelect = EventDispatcher()
+    @Field var shouldDismissOnSelect: Bool = true
     @Field var destructive: Bool? = false
 }
 
@@ -251,6 +287,8 @@ class ContextMenuSubProps: ExpoSwiftUI.ViewProps {}
 
 class ContextMenuSubTriggerProps: ExpoSwiftUI.ViewProps {
     var onSelect = EventDispatcher()
+    
+    @Field var destructive: Bool = false
 }
 
 class ContextMenuPreviewProps: ExpoSwiftUI.ViewProps {}
@@ -268,7 +306,8 @@ struct ContextMenuTriggerView: ExpoSwiftUI.View {
     }
 }
 
-class ContextMenuTriggerProps: ExpoSwiftUI.ViewProps {}
+class ContextMenuTriggerProps: ExpoSwiftUI.ViewProps {
+}
 
 // MARK - group view
 struct ContextMenuGroupView: ExpoSwiftUI.View {
@@ -295,4 +334,16 @@ class ContextMenuItemIconProps: ExpoSwiftUI.ViewProps {
     @Field var name: String = ""
 }
 
+// MARK - item accessory view
+struct ContextMenuAccessoryView: ExpoSwiftUI.View {
+    @EnvironmentObject var props: ContextMenuItemIconProps
+    
+    var body: some View {
+        Image(systemName: props.name)
+    }
+}
+
+class ContextMenuItemAccessoryProps: ExpoSwiftUI.ViewProps {
+    @Field var name: String = ""
+}
 

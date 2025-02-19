@@ -5,8 +5,8 @@ import { NativeSyntheticEvent } from "react-native";
 const name = "Zeego";
 
 const ContextMenuTrigger = requireNativeView(name, "ContextMenuTriggerView");
-const _ContextMenu = requireNativeView(name, "ContextMenuView");
-const ContextMenuPreview = requireNativeView(name, "ContextMenuPreviewView");
+const ContextMenu = requireNativeView(name, "ContextMenuView");
+const _ContextMenuPreview = requireNativeView(name, "ContextMenuPreviewView");
 const ContextMenuItem = requireNativeView(name, "ContextMenuItemView");
 const ContextMenuAccessory = requireNativeView(
   name,
@@ -93,7 +93,24 @@ function ContextMenuItemSubtitle(props: {
   );
 }
 
-let ContextMenu = _ContextMenu;
+function ContextMenuPreview(props: { children: React.ReactNode }) {
+  return (
+    <_ContextMenuPreview
+      style={{
+        position: "absolute",
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        zIndex: -1,
+        height: 0,
+        width: 0,
+      }}
+    >
+      {props.children}
+    </_ContextMenuPreview>
+  );
+}
 
 export {
   ContextMenuTrigger,

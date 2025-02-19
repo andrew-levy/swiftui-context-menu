@@ -20,5 +20,6 @@ public class ContextMenuModule: Module {
         View(ContextMenuSubTriggerView.self)
         View(ContextMenuGroupView.self)
         View(ContextMenuItemIconView.self)
+        View(ContextMenuAccessoryView.self)
     }
 }

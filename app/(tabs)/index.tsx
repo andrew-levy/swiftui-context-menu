@@ -152,7 +152,10 @@ export default function HomeScreen() {
         </ContextMenuContent>
       </ContextMenu>
 
-      <ContextMenu isDropdown>
+      <ContextMenu
+        isDropdown
+        onOpenChange={(open) => console.log("open", open.nativeEvent.open)}
+      >
         <ContextMenuTrigger>
           <ThemedText style={{ padding: 10 }}>Dropdown Menu</ThemedText>
         </ContextMenuTrigger>
@@ -170,18 +173,20 @@ export default function HomeScreen() {
         <ContextMenuTrigger>
           <ThemedText style={{ padding: 10 }}>With Preview</ThemedText>
         </ContextMenuTrigger>
-        <ContextMenuPreview
-          style={{
-            width: 400,
-            height: 400,
-            alignItems: "flex-start",
-            justifyContent: "flex-start",
-            backgroundColor: "red",
-          }}
-        >
-          <ThemedText style={{ padding: 10 }}>
-            This is the preview content
-          </ThemedText>
+        <ContextMenuPreview>
+          <View
+            style={{
+              width: 400,
+              height: 400,
+              alignItems: "flex-start",
+              justifyContent: "flex-start",
+              backgroundColor: "red",
+            }}
+          >
+            <ThemedText style={{ padding: 10 }}>
+              This is the preview content!
+            </ThemedText>
+          </View>
         </ContextMenuPreview>
         <ContextMenuItem>
           <ContextMenuItemTitle>With Preview Item 1</ContextMenuItemTitle>
