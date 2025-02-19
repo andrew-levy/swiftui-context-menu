@@ -87,8 +87,10 @@ struct ContextMenuSubContentView: ExpoSwiftUI.View {
 // MARK: - Item View (Just renders children)
 struct ContextMenuItemView: ExpoSwiftUI.View {
     @EnvironmentObject var props: ContextMenuItemProps
-    
+
     var body: some View {
+        let (icon, image) = extractComponents(from: props.children)
+        
         Button(role: props.destructive == true ? .destructive : nil, action: {
             props.onSelect([:])
         }) {
@@ -278,4 +280,19 @@ struct ContextMenuGroupView: ExpoSwiftUI.View {
 }
 
 class ContextMenuGroupProps: ExpoSwiftUI.ViewProps {}
+
+
+// MARK - item icon view
+struct ContextMenuItemIconView: ExpoSwiftUI.View {
+    @EnvironmentObject var props: ContextMenuItemIconProps
+    
+    var body: some View {
+        Image(systemName: props.name)
+    }
+}
+
+class ContextMenuItemIconProps: ExpoSwiftUI.ViewProps {
+    @Field var name: String = ""
+}
+
 

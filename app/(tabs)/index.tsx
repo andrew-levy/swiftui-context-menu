@@ -3,6 +3,7 @@ import {
   StyleSheet,
   ScrollView as ParallaxScrollView,
   Text as ThemedText,
+  View,
 } from "react-native";
 import Reactions from "@/components/Reactions";
 import {
@@ -54,26 +55,28 @@ export default function HomeScreen() {
             Basic (isOn: {checked})
           </ThemedText>
         </ContextMenuTrigger>
-        <ContextMenuItem destructive={true}>
-          <ContextMenuItemTitle>Basic Item 2</ContextMenuItemTitle>
-          <ContextMenuItemSubtitle>Subtitle here!</ContextMenuItemSubtitle>
-        </ContextMenuItem>
-        <ContextMenuSeparator />
-        <ContextMenuCheckboxItem
-          value={checked}
-          onValueChange={(v) => {
-            console.log("onValueChange", v);
-            setChecked(v);
-          }}
-        >
-          <ContextMenuItemTitle>Checkbox Item</ContextMenuItemTitle>
-          <ContextMenuItemSubtitle>Subtitle here!</ContextMenuItemSubtitle>
-        </ContextMenuCheckboxItem>
-        <ContextMenuItem>
-          <ContextMenuItemIcon name='person.fill' />
-          <ContextMenuItemTitle>Basic Item 2</ContextMenuItemTitle>
-          <ContextMenuItemSubtitle>Subtitle there...</ContextMenuItemSubtitle>
-        </ContextMenuItem>
+        <ContextMenuContent>
+          <ContextMenuItem destructive={true}>
+            <ContextMenuItemTitle>Basic Item 2</ContextMenuItemTitle>
+            <ContextMenuItemSubtitle>Subtitle here!</ContextMenuItemSubtitle>
+          </ContextMenuItem>
+          <ContextMenuSeparator />
+          <ContextMenuCheckboxItem
+            value={checked}
+            onValueChange={(v) => {
+              console.log("onValueChange", v);
+              setChecked(v);
+            }}
+          >
+            <ContextMenuItemTitle>Checkbox Item</ContextMenuItemTitle>
+            <ContextMenuItemSubtitle>Subtitle here!</ContextMenuItemSubtitle>
+          </ContextMenuCheckboxItem>
+          <ContextMenuItem>
+            <ContextMenuItemIcon name='person.fill' />
+            <ContextMenuItemTitle>Should have an icon</ContextMenuItemTitle>
+            <ContextMenuItemSubtitle>Where is it...</ContextMenuItemSubtitle>
+          </ContextMenuItem>
+        </ContextMenuContent>
       </ContextMenu>
 
       <ContextMenu>
@@ -155,9 +158,11 @@ export default function HomeScreen() {
         </ContextMenuTrigger>
 
         <ContextMenuContent>
-          <ContextMenuItem>
-            <ContextMenuItemTitle>!!</ContextMenuItemTitle>
-          </ContextMenuItem>
+          <View>
+            <ContextMenuItem>
+              <ContextMenuItemTitle>!!!</ContextMenuItemTitle>
+            </ContextMenuItem>
+          </View>
         </ContextMenuContent>
       </ContextMenu>
 
