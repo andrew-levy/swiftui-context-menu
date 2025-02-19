@@ -20,6 +20,7 @@ import {
   ContextMenuItemIcon,
   ContextMenuLabel,
   ContextMenuGroup,
+  ContextMenuContent,
 } from "@/modules/context-menu";
 import { useState } from "react";
 
@@ -108,40 +109,44 @@ export default function HomeScreen() {
           </ThemedText>
         </ContextMenuTrigger>
 
-        <ContextMenuLabel>Label here!!!</ContextMenuLabel>
+        <ContextMenuContent>
+          <ContextMenuLabel>Label here!!!</ContextMenuLabel>
 
-        <ContextMenuItem onSelect={() => console.log("main item")}>
-          <ContextMenuItemTitle>Main Menu Item</ContextMenuItemTitle>
-          <ContextMenuItemSubtitle>With a subtitle</ContextMenuItemSubtitle>
-        </ContextMenuItem>
-
-        <ContextMenuSeparator />
-
-        <ContextMenuSub>
-          <ContextMenuSubTrigger onSelect={() => console.log("hi")}>
-            <ContextMenuItemTitle>Advanced Options</ContextMenuItemTitle>
-            <ContextMenuItemSubtitle>Click for more...</ContextMenuItemSubtitle>
-          </ContextMenuSubTrigger>
-
-          <ContextMenuItem onSelect={() => console.log("sub item 1")}>
-            <ContextMenuItemTitle>Submenu Item 1</ContextMenuItemTitle>
+          <ContextMenuItem onSelect={() => console.log("main item")}>
+            <ContextMenuItemTitle>Main Menu Item</ContextMenuItemTitle>
+            <ContextMenuItemSubtitle>With a subtitle</ContextMenuItemSubtitle>
           </ContextMenuItem>
 
-          <ContextMenuCheckboxItem
-            value={checked}
-            onValueChange={(v) => {
-              console.log("submenu checkbox changed:", v);
-              setChecked(v);
-            }}
-          >
-            <ContextMenuItemTitle>Submenu Checkbox</ContextMenuItemTitle>
-            <ContextMenuItemSubtitle>Uses main state</ContextMenuItemSubtitle>
-          </ContextMenuCheckboxItem>
+          <ContextMenuSeparator />
 
-          <ContextMenuItem destructive onSelect={() => console.log("delete")}>
-            <ContextMenuItemTitle>Delete Something</ContextMenuItemTitle>
-          </ContextMenuItem>
-        </ContextMenuSub>
+          <ContextMenuSub>
+            <ContextMenuSubTrigger onSelect={() => console.log("hi")}>
+              <ContextMenuItemTitle>Advanced Options</ContextMenuItemTitle>
+              <ContextMenuItemSubtitle>
+                Click for more...
+              </ContextMenuItemSubtitle>
+            </ContextMenuSubTrigger>
+
+            <ContextMenuItem onSelect={() => console.log("sub item 1")}>
+              <ContextMenuItemTitle>Submenu Item 1</ContextMenuItemTitle>
+            </ContextMenuItem>
+
+            <ContextMenuCheckboxItem
+              value={checked}
+              onValueChange={(v) => {
+                console.log("submenu checkbox changed:", v);
+                setChecked(v);
+              }}
+            >
+              <ContextMenuItemTitle>Submenu Checkbox</ContextMenuItemTitle>
+              <ContextMenuItemSubtitle>Uses main state</ContextMenuItemSubtitle>
+            </ContextMenuCheckboxItem>
+
+            <ContextMenuItem destructive onSelect={() => console.log("delete")}>
+              <ContextMenuItemTitle>Delete Something</ContextMenuItemTitle>
+            </ContextMenuItem>
+          </ContextMenuSub>
+        </ContextMenuContent>
       </ContextMenu>
 
       <ContextMenu isDropdown>
@@ -149,9 +154,11 @@ export default function HomeScreen() {
           <ThemedText style={{ padding: 10 }}>Dropdown Menu</ThemedText>
         </ContextMenuTrigger>
 
-        <ContextMenuItem>
-          <ContextMenuItemTitle>!!</ContextMenuItemTitle>
-        </ContextMenuItem>
+        <ContextMenuContent>
+          <ContextMenuItem>
+            <ContextMenuItemTitle>!!</ContextMenuItemTitle>
+          </ContextMenuItem>
+        </ContextMenuContent>
       </ContextMenu>
 
       <ContextMenu>

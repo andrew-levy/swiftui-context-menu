@@ -2,28 +2,45 @@ import { requireNativeView } from "expo";
 import { Fragment } from "react";
 import { NativeSyntheticEvent } from "react-native";
 
-const name = "ContextMenu";
+const name = "Zeego";
 
-const ContextMenuTrigger = requireNativeView(name, "ContextMenuTrigger");
-const _ContextMenu = requireNativeView(name, "ContextMenu");
-const ContextMenuPreview = requireNativeView(name, "ContextMenuPreview");
-const ContextMenuItem = requireNativeView(name, "ContextMenuItem");
-const ContextMenuAccessory = requireNativeView(name, "ContextMenuAccessory");
-const ContextMenuSeparator = requireNativeView(name, "ContextMenuSeparator");
-const ContextMenuItemIcon = requireNativeView(name, "ContextMenuItemIcon");
+const ContextMenuTrigger = requireNativeView(name, "ContextMenuTriggerView");
+const _ContextMenu = requireNativeView(name, "ContextMenuView");
+const ContextMenuPreview = requireNativeView(name, "ContextMenuPreviewView");
+const ContextMenuItem = requireNativeView(name, "ContextMenuItemView");
+const ContextMenuAccessory = requireNativeView(
+  name,
+  "ContextMenuAccessoryView"
+);
+const ContextMenuSeparator = requireNativeView(
+  name,
+  "ContextMenuSeparatorView"
+);
+const ContextMenuItemIcon = requireNativeView(name, "ContextMenuItemIconView");
 const _ContextMenuCheckboxItem = requireNativeView(
   name,
-  "ContextMenuCheckboxItem"
+  "ContextMenuCheckboxItemView"
 );
-const _ContextMenuItemTitle = requireNativeView(name, "ContextMenuItemTitle");
+const _ContextMenuItemTitle = requireNativeView(
+  name,
+  "ContextMenuItemTitleView"
+);
 const _ContextMenuItemSubtitle = requireNativeView(
   name,
-  "ContextMenuItemSubtitle"
+  "ContextMenuItemSubtitleView"
 );
-const ContextMenuSub = requireNativeView(name, "ContextMenuSub");
-const ContextMenuSubTrigger = requireNativeView(name, "ContextMenuSubTrigger");
-const _ContextMenuLabel = requireNativeView(name, "ContextMenuLabel");
-const ContextMenuGroup = requireNativeView(name, "ContextMenuGroup");
+const ContextMenuSub = requireNativeView(name, "ContextMenuSubView");
+const ContextMenuSubTrigger = requireNativeView(
+  name,
+  "ContextMenuSubTriggerView"
+);
+const _ContextMenuLabel = requireNativeView(name, "ContextMenuLabelView");
+const ContextMenuGroup = requireNativeView(name, "ContextMenuGroupView");
+const ContextMenuContent = requireNativeView(name, "ContextMenuContentView");
+const ContextMenuSubContent = requireNativeView(
+  name,
+  "ContextMenuSubContentView"
+);
 
 function ContextMenuLabel(props: { children: React.ReactNode }) {
   return (
@@ -75,14 +92,6 @@ function ContextMenuItemSubtitle(props: {
     />
   );
 }
-
-const ContextMenuContent = (props: { children: React.ReactNode }) => {
-  return <Fragment>{props.children}</Fragment>;
-};
-
-const ContextMenuSubContent = (props: { children: React.ReactNode }) => {
-  return <Fragment>{props.children}</Fragment>;
-};
 
 let ContextMenu = _ContextMenu;
 

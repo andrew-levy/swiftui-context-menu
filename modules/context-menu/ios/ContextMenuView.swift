@@ -35,6 +35,8 @@ struct ContextMenuView: ExpoSwiftUI.View {
     var body: some View {
         let (trigger, preview, content) = extractMenuComponents(from: props.children)
         
+        let _ = print("ContextMenuView debug - Content: \(String(describing: content)), Preview: \(String(describing: preview)), Trigger: \(String(describing: trigger))")
+        
         if let trigger {
             if props.isDropdown == true {
                 Menu {
@@ -266,8 +268,20 @@ struct ContextMenuTriggerView: ExpoSwiftUI.View {
     @EnvironmentObject var props: ContextMenuTriggerProps
     
     var body: some View {
-        UnwrappedChildren()
+        Children()
     }
 }
 
 class ContextMenuTriggerProps: ExpoSwiftUI.ViewProps {}
+
+// MARK - group view
+struct ContextMenuGroupView: ExpoSwiftUI.View {
+    @EnvironmentObject var props: ContextMenuTriggerProps
+    
+    var body: some View {
+        UnwrappedChildren()
+    }
+}
+
+class ContextMenuGroupProps: ExpoSwiftUI.ViewProps {}
+

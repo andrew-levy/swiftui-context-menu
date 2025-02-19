@@ -3,7 +3,7 @@ import SwiftUI
 
 public class ContextMenuModule: Module {
     public func definition() -> ModuleDefinition {
-        Name("ContextMenu")
+        Name("Zeego")
         
         View(ContextMenuView.self)
         View(ContextMenuContentView.self)
@@ -18,5 +18,6 @@ public class ContextMenuModule: Module {
         View(ContextMenuCheckboxItemView.self)
         View(ContextMenuSubView.self)
         View(ContextMenuSubTriggerView.self)
+        View(ContextMenuGroupView.self)
     }
 }
