@@ -1,22 +1,7 @@
 {
   "platforms": ["apple", "android", "web"],
   "apple": {
-    "modules": [
-      "ContextMenuModule",
-      "ContextMenuTriggerModule",
-      "ContextMenuItemModule",
-      "ContextMenuPreviewModule",
-      "ContextMenuAccessoryModule",
-      "ContextMenuItemTitleModule",
-      "ContextMenuItemSubtitleModule",
-      "ContextMenuSeparatorModule",
-      "ContextMenuCheckboxItemModule",
-      "ContextMenuSubModule",
-      "ContextMenuSubTriggerModule",
-      "ContextMenuItemIconModule",
-      "ContextMenuLabelModule",
-      "ContextMenuGroupModule"
-    ]
+    "modules": ["ContextMenuModule"]
   },
   "android": {
     "modules": ["expo.modules.contextmenu.ContextMenuModule"]
