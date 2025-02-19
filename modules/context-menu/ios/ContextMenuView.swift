@@ -40,9 +40,7 @@ struct ContextMenuView: ExpoSwiftUI.View {
         if let trigger {
             if props.isDropdown == true {
                 Menu {
-                    if let content {
-                        content
-                    }
+                    UnwrappedChildren()
                 } label: {
                     trigger.frame(alignment: .topLeading)
                 }
@@ -51,9 +49,7 @@ struct ContextMenuView: ExpoSwiftUI.View {
             } else if let preview {
                 trigger
                     .contextMenu {
-                        if let content {
-                            content
-                        }
+                        UnwrappedChildren()
                     } preview: {
                         preview.ignoresSafeArea(.all)
                     }
@@ -62,9 +58,7 @@ struct ContextMenuView: ExpoSwiftUI.View {
             } else {
                 trigger
                     .contextMenu {
-                        if let content {
-                            content
-                        }
+                        UnwrappedChildren()
                     }
                     .onAppear { props.onOpenChange(["open": true]) }
                     .onDisappear { props.onOpenChange(["open": false]) }
