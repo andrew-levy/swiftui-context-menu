@@ -177,6 +177,7 @@ struct ContextMenuCheckboxItemView: ExpoSwiftUI.View {
     @EnvironmentObject var props: ContextMenuCheckboxItemProps
     
     var body: some View {
+        
         Toggle(isOn: Binding(
             get: { props.value == "on" },
             set: { newValue in
@@ -185,6 +186,8 @@ struct ContextMenuCheckboxItemView: ExpoSwiftUI.View {
         )) {
             UnwrappedChildren()
         }
+        .modifier(MenuActionDismissBehaviorModifier(shouldDismiss: props.shouldDismissOnSelect))
+
     }
 }
 
@@ -220,10 +223,9 @@ struct ContextMenuSubView: ExpoSwiftUI.View {
         
         if let trigger {
             Menu {
-                props.children = content
-                return UnwrappedChildren()
+                UnwrappedChildren(children: content)
             } label: {
-                trigger
+                UnwrappedChildren(children: [trigger])
             }
         } else {
             UnwrappedChildren()
@@ -244,7 +246,7 @@ struct ContextMenuSubTriggerView: ExpoSwiftUI.View {
     }
 }
 
-// MARK: - Preview View (Just renders children)
+// MARK: - Preview View
 struct ContextMenuPreviewView: ExpoSwiftUI.View {
     @EnvironmentObject var props: ContextMenuPreviewProps
     @EnvironmentObject var shadowNodeProxy: ExpoSwiftUI.ShadowNodeProxy
@@ -280,6 +282,7 @@ class ContextMenuLabelProps: ExpoSwiftUI.ViewProps {
 
 class ContextMenuCheckboxItemProps: ExpoSwiftUI.ViewProps {
     var onValueChange = EventDispatcher()
+    @Field var shouldDismissOnSelect: Bool = true
     @Field var value: String = "off"
 }
 
