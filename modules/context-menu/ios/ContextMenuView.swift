@@ -111,6 +111,9 @@ struct ContextMenuItemView: ExpoSwiftUI.View {
         Button(role: props.destructive == true ? .destructive : nil, action: {
             props.onSelect([:])
         }) {
+            if let textValue = props.textValue {
+                Text(textValue)
+            }
             UnwrappedChildren()
         }
         .modifier(MenuActionDismissBehaviorModifier(shouldDismiss: props.shouldDismissOnSelect))
@@ -177,15 +180,16 @@ struct ContextMenuCheckboxItemView: ExpoSwiftUI.View {
     @EnvironmentObject var props: ContextMenuCheckboxItemProps
     
     var body: some View {
-        
-        Toggle(isOn: Binding(
-            get: { props.value == "on" },
-            set: { newValue in
-                props.onValueChange(["value": newValue ? "on" : "off"])
+        Toggle(
+            isOn: Binding(
+                get: { props.value == "on" },
+                set: { newValue in
+                    props.onValueChange(["value": newValue ? "on" : "off"])
+                }
+            ), label: {
+                UnwrappedChildren()
             }
-        )) {
-            UnwrappedChildren()
-        }
+        )
         .modifier(MenuActionDismissBehaviorModifier(shouldDismiss: props.shouldDismissOnSelect))
 
     }
@@ -266,6 +270,7 @@ class ContextMenuItemProps: ExpoSwiftUI.ViewProps {
     var onSelect = EventDispatcher()
     @Field var shouldDismissOnSelect: Bool = true
     @Field var destructive: Bool? = false
+    @Field var textValue: String?
 }
 
 class ContextMenuItemTitleProps: ExpoSwiftUI.ViewProps {

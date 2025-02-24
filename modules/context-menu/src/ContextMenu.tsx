@@ -1,5 +1,4 @@
 import { requireNativeView } from "expo";
-import { Fragment } from "react";
 import { NativeSyntheticEvent } from "react-native";
 
 const name = "Zeego";
@@ -76,21 +75,54 @@ function ContextMenuCheckboxItem(props: {
 }
 
 function ContextMenuItemTitle(props: { children: string | React.ReactNode }) {
-  return (
-    <_ContextMenuItemTitle
-      text={typeof props.children === "string" ? props.children : undefined}
-    />
-  );
+  let text = typeof props.children === "string" ? props.children : "";
+
+  if (Array.isArray(props.children)) {
+    /**
+     * Support: <ContextMenuItemTitle>Some text: {someVariable}</ContextMenuItemTitle>
+     *
+     * React turns the above into ["Some text: ", someVariable]
+     */
+    for (let i = 0; i < props.children.length; i++) {
+      const child = props.children[i];
+      if (typeof child === "string" || typeof child === "number") {
+        text += child;
+      }
+    }
+  }
+
+  if (!text) return null;
+
+  return <_ContextMenuItemTitle text={text || undefined} />;
 }
 
 function ContextMenuItemSubtitle(props: {
   children: string | React.ReactNode;
 }) {
-  return (
-    <_ContextMenuItemSubtitle
-      text={typeof props.children === "string" ? props.children : undefined}
-    />
-  );
+  let text = typeof props.children === "string" ? props.children : "";
+
+  if (Array.isArray(props.children)) {
+    /**
+     * Support: <ContextMenuItemTitle>Some text: {someVariable}</ContextMenuItemTitle>
+     *
+     * React turns the above into ["Some text: ", someVariable]
+     */
+    for (let i = 0; i < props.children.length; i++) {
+      const child = props.children[i];
+      if (typeof child === "string" || typeof child === "number") {
+        text += child;
+      }
+    }
+  }
+
+  if (!text) {
+    console.warn(
+      "[zeego][ContextMenuItemSubtitle] You did not pass any text children to the subtitle component. Was this intentional? It will be hidden on iOS."
+    );
+    return null;
+  }
+
+  return <_ContextMenuItemSubtitle text={text} />;
 }
 
 function ContextMenuPreview(props: { children: React.ReactNode }) {
